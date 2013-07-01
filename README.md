@@ -29,9 +29,45 @@ DrawQTLtrait.pdf
 
 1.2 reference
 
+Create "reference dir" and put reference sequence, dbSNPs in "reference dir"
+
+     mkdir ../input/reference
+     cd ../input/reference
+     ln -s /rhome/cjinfeng/HEG4_cjinfeng/RILs/Depth_Evaluation/input/HEG4_dbSNP.vcf ./
+     ln -s /rhome/cjinfeng/HEG4_cjinfeng/seqlib/MSU_r7.fa ./
+
+Format dbSNPs and reference sequence
+
+     grep -v "#" HEG4_dbSNP.vcf | awk '{print $1"\t"$2"\t"$5"\t"$4}' > HEG4_dbSNP.table
+     perl /rhome/cjinfeng/HEG4_cjinfeng/RILs/QTL_pipe/bin/scritps/reference/formatfa.pl --fa MSU_r7.fa --project Nipponbare
+     rm MSU_r7.fa
+     ln -s MSU_r7.reform.fa MSU_r7.fa
+
+Generate parent2 reference sequence (HEG4) 
+
+     perl /rhome/cjinfeng/HEG4_cjinfeng/RILs/QTL_pipe/bin/scritps/reference/PseudoMaker_cjinfeng.pl HEG4_dbSNP.table MSU_r7.fa HEG4
+
+
 1.3 fastq
 
+create "fastq dir" and put fastq of RILs in  "fastq dir"
 
+     mkdir ../input/fastq/
+     cd ../input/fastq/
+     ln -s /rhome/cjinfeng/Rice/RIL/Illumina/ ./
+
+Get sample of fastq of RILs (0.1 X)
+
+     perl /rhome/cjinfeng/HEG4_cjinfeng/RILs/QTL_pipe/bin/scritps/fastq/prefastq.pl --RIL ./Illumina > prefastq.list
+
+Or run using qsub
+
+     qsub runprefastq.sh
+
+Put all sample into a project dir
+
+     mkdir RIL_1X
+     mv GN* RIL_1X
 
 2. Mapping Reads (Maq, replace with bwa?)
 
