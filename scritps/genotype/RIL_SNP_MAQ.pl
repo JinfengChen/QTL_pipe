@@ -19,7 +19,7 @@ if ($opt{help} or keys %opt < 1){
    exit();
 }
 
-$opt{project} ||= "NB.RILs";
+$opt{project} ||= "NB.RILs.dbSNP";
 
 my $maq="/opt/tyler/bin/maq";
 my @map=glob("$opt{fastq}/GN*.Maq.p1.map");
@@ -45,6 +45,10 @@ if ($opt{split}){
    parsepileup($pileup) unless ($opt{parents}); ## generate parents SNPs from pileup file of Maq, skip if parents provide by user
 }
 my $parents=$opt{parents} ? $opt{parents} : "$opt{project}.SNPs.parents";
+#my $parents="$opt{project}.SNPs.parents";
+#if ($opt{parents} and $opt{parents} ne $parents){
+#   `ln -s $opt{parents} $opt{project}.SNPs.parents`;
+#}
 RILgenotype(\@map,$parents); ## call SNPs for RILs based on SNPs of parents, which means only the SNPs exists parents will be called
 
 
@@ -77,10 +81,11 @@ my ($map,$parents)=@_;
 my $refparents=parents($parents);
 my @RIL;
 my %hash;
+open TEMP, ">temp.pileup.list" or die "$!"; 
 for(my $i=0; $i< @$map; $i++){
 my $rils=$1 if ($map->[$i]=~/\/(GN\d+)\.Maq\.p1\.map/); #../input/fastq/012/GN1.Maq.p1.map
 push @RIL, $rils;
-print "$rils\n";
+print TEMP "$rils\n";
 `$maq pileup -vP -q 40 $opt{ref}.bfa $map->[$i] | awk '\$4 > 0' > $map->[$i].pileup` unless (-e "$map->[$i].pileup");
 #`grep "chromosome05" $map->[$i].pileup | awk '\$4 > 0' > $map->[$i].pileup.chr05` unless (-e "$map->[$i].pileup.chr05");
 my $maxdepth=10; #max depth of one SNP to avoid repetitive sequence regions
@@ -140,15 +145,18 @@ while(<IN>){
           $hash{$snpID}{$rils}=$SNP[0];
        }
     }
-}
+}#while loop
 close IN;
 }# for loop
+close TEMP;
 
-print "output\n";
+print "output genotype\n";
 ## write SNPs of RILs into file
 open OUT, ">$opt{project}.SNPs.RILs" or die "$!";
 open OUT1, ">$opt{project}.SNPs.sub.parents" or die "$!";
 open OUT2, ">$opt{project}.SNPs.sub.Marker";
+print OUT1 "V1\tV2\n";
+print OUT2 "SNP_id\tAllele\n";
 my $head=join("\t",@RIL);
 print OUT "$head\n";
 foreach my $snp (sort {$a <=> $b} keys %$refparents){

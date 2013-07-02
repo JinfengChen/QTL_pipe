@@ -28,12 +28,27 @@ rm GN39a_*
 mkdir RILs_1x
 mv GN* RILs_1X
 
-echo "genotype RILs with SNP called from resequencing HEG4"
+echo "00.Mapping reads and pileup"
+bash step00.mapping.sh
+
+echo "01.genotype RILs with SNP called from resequencing HEG4"
 echo "convert VCF SNPs into parents file"
 perl /rhome/cjinfeng/HEG4_cjinfeng/RILs/QTL_pipe/bin/scritps/genotype/RIL_VCF2Parents.pl --vcf ../input/reference/HEG4_dbSNP.vcf
 echo "genotype Maq results of RILs using parents file"
 perl /rhome/cjinfeng/HEG4_cjinfeng/RILs/QTL_pipe/bin/scritps/genotype/RIL_SNP_MAQ.pl --ref ../input/reference/MSU_r7.fa --fastq ../input/fastq/002 --parents NB.RILs.dbSNP.SNPs.parents
-
-echo "Or run two step in qsub"
+echo "Or run two step 'genotype' in qsub"
 qsub -q js step01.genotype.sh
+
+
+echo "02.constructe recombiantion bin and draw bin"
+echo "construct recombination bin using MPR package"
+cat /rhome/cjinfeng/HEG4_cjinfeng/RILs/QTL_pipe/bin/scritps/recombination_map/MPR_hmmrun.R | /rhome/cjinfeng/software/tools/R-2.15.3/bin/R --slave
+#draw bin map for each RILs and for each chromosome
+perl /rhome/cjinfeng/HEG4_cjinfeng/RILs/QTL_pipe/bin/scritps/recombination_map/RIL_drawbin.pl --MPR ./ --chrlen ../input/reference/MSU7.chr.inf
+echo "Or run two step in qsub"
+qsub -q js step02.recombination_bin.sh
+
+echo "03.QTL"
+qsub -q js step03.QTL.sh
+
 
