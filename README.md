@@ -3,7 +3,7 @@ QTL_pipe
 
 The pipeline do the job of mapping QTL in RILs.
 
-1. Preparation
+1 . Preparation
 
 1.1 trait
 
@@ -69,7 +69,7 @@ Put all sample into a project dir
      mkdir RIL_1X
      mv GN* RIL_1X
 
-2. Mapping Reads (Maq, replace with bwa?)
+2 . Mapping Reads (Maq, replace with bwa?)
 
 Run shell "step00.mapping.sh" using shell
 
@@ -84,7 +84,7 @@ The output files:
 GN*.Maq.p1.map.pileup, will be present in where read is and used by genotyping script "step01.genotype.sh".
 
 
-3. Recombination Map (MPR package, Xie et al, 2010 PNAS)
+3 . Recombination Map (MPR package, Xie et al, 2010 PNAS)
 
 3.1 Genotyping RILs
 
@@ -143,7 +143,7 @@ MPR.geno.data
 MPR.geno.data.HMMcr
 MPR_bin/, directory of pdf contains recombination bin for each RIL and each chromosome
 
-4. QTL using R (Rqtl, Broman et al, 2003 Bioinfromatics)
+4 . QTL using R (Rqtl, Broman et al, 2003 Bioinfromatics)
 
 Run shell "step03.QTL.sh" using qsub
 
