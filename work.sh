@@ -10,23 +10,19 @@ echo "prepare reference"
 mkdir ../input/reference
 cd ../input/reference
 ln -s /rhome/cjinfeng/HEG4_cjinfeng/RILs/Depth_Evaluation/input/HEG4_dbSNP.vcf ./
+ln -s /rhome/cjinfeng/HEG4_cjinfeng/seqlib/MSU7.chr.inf ./
 ln -s /rhome/cjinfeng/HEG4_cjinfeng/seqlib/MSU_r7.fa ./
-grep -v "#" HEG4_dbSNP.vcf | awk '{print $1"\t"$2"\t"$5"\t"$4}' > HEG4_dbSNP.table
 perl /rhome/cjinfeng/HEG4_cjinfeng/RILs/QTL_pipe/bin/scritps/reference/formatfa.pl --fa MSU_r7.fa --project Nipponbare
 rm MSU_r7.fa
 ln -s MSU_r7.reform.fa MSU_r7.fa
-perl /rhome/cjinfeng/HEG4_cjinfeng/RILs/QTL_pipe/bin/scritps/reference/PseudoMaker_cjinfeng.pl HEG4_dbSNP.table MSU_r7.fa HEG4
 
 
 echo "prepare fastq"
 mkdir ../input/fastq/
 cd ../input/fastq/
 ln -s /rhome/cjinfeng/Rice/RIL/Illumina/ ./
-qsub runprefastq.sh
-##delete duplicate
-rm GN39a_*
-mkdir RILs_1x
-mv GN* RILs_1X
+mkdir RIL_0.5X
+bash step00.prefastq.sh
 
 echo "00.Mapping reads and pileup"
 bash step00.mapping.sh

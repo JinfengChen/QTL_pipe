@@ -7,7 +7,7 @@ export R_LIBS="/rhome/cjinfeng/software/tools/R-2.15.3/library/"
 
 cd $PBS_O_WORKDIR
 
-scripts=$PBS_O_WORKDIR/scritps
+scripts=$PBS_O_WORKDIR/scripts
 #construct recombination bin using MPR package
 cat $scripts/recombination_map/MPR_hmmrun.R | /rhome/cjinfeng/software/tools/R-2.15.3/bin/R --slave
 #draw bin map for each RILs and for each chromosome

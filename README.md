@@ -3,7 +3,7 @@ QTL_pipe
 
 The pipeline do the job of mapping QTL in RILs.
 
-1. Preparation
+1 . Preparation
 
 1.1 trait
 
@@ -34,19 +34,14 @@ Create "reference dir" and put reference sequence, dbSNPs in "reference dir"
      mkdir ../input/reference
      cd ../input/reference
      ln -s /rhome/cjinfeng/HEG4_cjinfeng/RILs/Depth_Evaluation/input/HEG4_dbSNP.vcf ./
+     ln -s /rhome/cjinfeng/HEG4_cjinfeng/seqlib/MSU7.chr.inf ./
      ln -s /rhome/cjinfeng/HEG4_cjinfeng/seqlib/MSU_r7.fa ./
 
 Format dbSNPs and reference sequence
 
-     grep -v "#" HEG4_dbSNP.vcf | awk '{print $1"\t"$2"\t"$5"\t"$4}' > HEG4_dbSNP.table
      perl /rhome/cjinfeng/HEG4_cjinfeng/RILs/QTL_pipe/bin/scritps/reference/formatfa.pl --fa MSU_r7.fa --project Nipponbare
      rm MSU_r7.fa
      ln -s MSU_r7.reform.fa MSU_r7.fa
-
-Generate parent2 reference sequence (HEG4) 
-
-     perl /rhome/cjinfeng/HEG4_cjinfeng/RILs/QTL_pipe/bin/scritps/reference/PseudoMaker_cjinfeng.pl HEG4_dbSNP.table MSU_r7.fa HEG4
-
 
 1.3 fastq
 
@@ -55,36 +50,33 @@ create "fastq dir" and put fastq of RILs in  "fastq dir"
      mkdir ../input/fastq/
      cd ../input/fastq/
      ln -s /rhome/cjinfeng/Rice/RIL/Illumina/ ./
+     mkdir RIL_0.5X
 
 Get sample of fastq of RILs (0.1 X)
 
-     perl /rhome/cjinfeng/HEG4_cjinfeng/RILs/QTL_pipe/bin/scritps/fastq/prefastq.pl --RIL ./Illumina > prefastq.list
+     perl /rhome/cjinfeng/HEG4_cjinfeng/RILs/QTL_pipe/bin/scritps/fastq/prefastq_qsub.pl --RIL /rhome/cjinfeng/HEG4_cjinfeng/RILs/QTL_pipe/input/fastq/Illumina --fastq /rhome/cjinfeng/HEG4_cjinfeng/RILs/QTL_pipe/input/fastq/RILs_0.5X > prefastq.list
 
-Or run using qsub
+Or run using shell "step00.prefastq.sh" (if fq file already exists, it would not do anything on this line )
 
-     qsub runprefastq.sh
+     bash step00.prefastq.sh
 
-Put all sample into a project dir
 
-     mkdir RIL_1X
-     mv GN* RIL_1X
+2 . Mapping Reads (Maq, replace with bwa?)
 
-2. Mapping Reads (Maq, replace with bwa?)
-
-Run shell "step00.mapping.sh" using shell
+Run shell "step00.mapping.sh" using shell (if GN*.Maq.p1.map.pileup already exists for a RIL, it would not do anything on this line)
 
 	bash step00.mapping.sh
 
 which use "RIL_MAQ_qsub.pl" to map reads to reference and do pileup.
 
-	perl $scripts/mapping/RIL_MAQ_qsub.pl --ref /rhome/cjinfeng/HEG4_cjinfeng/RILs/QTL_pipe/input/reference/MSU_r7.fa --fastq /rhome/cjinfeng/HEG4_cjinfeng/RILs/QTL_pipe/input/fastq/RILs_0.2X
+	perl $scripts/mapping/RIL_MAQ_qsub.pl --ref /rhome/cjinfeng/HEG4_cjinfeng/RILs/QTL_pipe/input/reference/MSU_r7.fa --fastq /rhome/cjinfeng/HEG4_cjinfeng/RILs/QTL_pipe/input/fastq/RILs_0.5X
 
 The output files:
 
 GN*.Maq.p1.map.pileup, will be present in where read is and used by genotyping script "step01.genotype.sh".
 
 
-3. Recombination Map (MPR package, Xie et al, 2010 PNAS)
+3 . Recombination Map (MPR package, Xie et al, 2010 PNAS)
 
 3.1 Genotyping RILs
 
@@ -100,7 +92,7 @@ Convert SNPs into parents files, which will be used to genotype the RILs.
 
 Genotype Maq results of RILs using parents file 
 
-	perl $scritps/genotype/RIL_SNP_MAQ.pl --ref ../input/reference/MSU_r7.fa --fastq ../input/fastq/012 --parents NB.RILs.dbSNP.SNPs.parents
+	perl $scritps/genotype/RIL_SNP_MAQ.pl --ref ../input/reference/MSU_r7.fa --fastq ../input/fastq/RILs_0.5X --parents NB.RILs.dbSNP.SNPs.parents
 
 The output files:
 
@@ -143,7 +135,7 @@ MPR.geno.data
 MPR.geno.data.HMMcr
 MPR_bin/, directory of pdf contains recombination bin for each RIL and each chromosome
 
-4. QTL using R (Rqtl, Broman et al, 2003 Bioinfromatics)
+4 . QTL using R (Rqtl, Broman et al, 2003 Bioinfromatics)
 
 Run shell "step03.QTL.sh" using qsub
 
