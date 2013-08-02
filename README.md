@@ -97,10 +97,15 @@ Genotype Maq results of RILs using parents file
 The output files:
 
 NB.RILs.dbSNP.SNPs.parents, parents genotypes obtained from SNPs data.
+
 NB.RILs.dbSNP.SNPs.Markers, parent1 genotypes that used as reference genome.
+
 NB.RILs.dbSNP.SNPs.RILs, genotypes of RILs on each markers.
+
 NB.RILs.dbSNP.SNPs.sub.parents, parents genotypes only for these markers have polymorephism in RILs.
+
 NB.RILs.dbSNP.SNPs.sub.Marker, parent1 genotypes only for these markers have polymorephism in RILs.
+
 NB.RILs.pdf, test runs of Rqtl for QTL mapping of first trait
 
 NB.RILs.dbSNP.SNPs.RILs,NB.RILs.dbSNP.SNPs.Markers,NB.RILs.dbSNP.SNPs.sub.parents will be used in "MPR_hmmrun.R" of step02.recombination_bin.sh 

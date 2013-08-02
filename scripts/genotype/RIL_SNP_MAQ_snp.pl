@@ -10,7 +10,7 @@ use Getopt::Long;
 use FindBin qw($Bin $Script);
 
 my %opt;
-GetOptions(\%opt,"ref:s","fastq:s","project:s","help");
+GetOptions(\%opt,"ref:s","fastq:s","parent:s","project:s","help");
 
 if ($opt{help} or keys %opt < 1){
    print "Usage: perl $0 --ref ../input/reference/Pseudomolecules_Nipponbare.Build4.0.fasta --fastq ../input/testfastq\n";
@@ -18,7 +18,7 @@ if ($opt{help} or keys %opt < 1){
 }
 
 my $maq="/opt/tyler/bin/maq";
-my @map=glob("$opt{fastq}/GN*.Maq.p1.map");
+my @map=glob("$opt{fastq}/GN*.Maq.p1.map.pileup");
 
 pileup(\@map);
 
@@ -30,14 +30,15 @@ my @cmd;
 my $maq="/opt/tyler/bin/maq";
 my $convert="/rhome/cjinfeng/HEG4_cjinfeng/RILs/QTL_pipe/bin/scripts/genotype/pileup2SNP.pl";
 for(my $i=0; $i< @$map; $i++){
-   push @cmd, "$maq pileup -vP -q 40 $opt{ref}.bfa $map->[$i] | awk '\$4 > 0' > $map->[$i].pileup" unless (-e "$map->[$i].pileup");
-   open OUT, ">pileup.sh" or die "$!";
+   #push @cmd, "$maq pileup -vP -q 40 $opt{ref}.bfa $map->[$i] | awk '\$4 > 0' > $map->[$i].pileup" unless (-e "$map->[$i].pileup");
+   push @cmd, "perl $convert --pileup $map->[$i] --parent $opt{parent}" unless (-e "$map->[$i].SNP");
+   open OUT, ">snp.sh" or die "$!";
    for(my $i=0; $i<@cmd; $i++){
       print OUT "$cmd[$i]\n";
    }
    close OUT;
 }# for loop
-`perl /rhome/cjinfeng/software/bin/qsub-pbs.pl --convert no --maxjob 10 --resource nodes=1:ppn=1,mem=5G,walltime=100:00:00 pileup.sh`;
+`perl /rhome/cjinfeng/software/bin/qsub-pbs.pl --convert no --maxjob 30 --resource nodes=1:ppn=1,mem=5G,walltime=100:00:00 snp.sh`;
 }# end of sub function
 
 

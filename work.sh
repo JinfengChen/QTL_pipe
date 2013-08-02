@@ -29,12 +29,19 @@ bash step00.mapping.sh
 
 echo "01.genotype RILs with SNP called from resequencing HEG4"
 echo "convert VCF SNPs into parents file"
-perl /rhome/cjinfeng/HEG4_cjinfeng/RILs/QTL_pipe/bin/scritps/genotype/RIL_VCF2Parents.pl --vcf ../input/reference/HEG4_dbSNP.vcf
+perl /rhome/cjinfeng/HEG4_cjinfeng/RILs/QTL_pipe/bin/scripts/genotype/RIL_VCF2Parents.pl --vcf ../input/reference/HEG4_dbSNP.vcf
+echo "Run pileup and SNP using qsub before genotype, speed up the process (pileup already build in in Mapping process, so just run snp here)"
+perl /rhome/cjinfeng/HEG4_cjinfeng/RILs/QTL_pipe/bin/scripts/genotype/RIL_SNP_MAQ_pileup.pl --ref /rhome/cjinfeng/HEG4_cjinfeng/RILs/QTL_pipe/input/reference/MSU_r7.fa --fastq /rhome/cjinfeng/HEG4_cjinfeng/RILs/QTL_pipe/input/fastq/RILs_0.5X 
+perl /rhome/cjinfeng/HEG4_cjinfeng/RILs/QTL_pipe/bin/scripts/genotype/RIL_SNP_MAQ_snp.pl --ref /rhome/cjinfeng/HEG4_cjinfeng/RILs/QTL_pipe/input/reference/MSU_r7.fa --parent /rhome/cjinfeng/HEG4_cjinfeng/RILs/QTL_pipe/bin/NB.RILs.dbSNP.SNPs.parents --fastq /rhome/cjinfeng/HEG4_cjinfeng/RILs/QTL_pipe/input/fastq/RILs_0.5X
 echo "genotype Maq results of RILs using parents file"
-perl /rhome/cjinfeng/HEG4_cjinfeng/RILs/QTL_pipe/bin/scritps/genotype/RIL_SNP_MAQ.pl --ref ../input/reference/MSU_r7.fa --fastq ../input/fastq/002 --parents NB.RILs.dbSNP.SNPs.parents
-echo "Or run two step 'genotype' in qsub"
+perl /rhome/cjinfeng/HEG4_cjinfeng/RILs/QTL_pipe/bin/scripts/genotype/RIL_SNP_MAQ.pl --ref ../input/reference/MSU_r7.fa --fastq ../input/fastq/RILs_0.5X --parents NB.RILs.dbSNP.SNPs.parents
+echo "or Run in shell"
+qsub -q js step01.parent.sh
+bash step01.pileup.sh
+bash step01.snp.sh
 qsub -q js step01.genotype.sh
-
+echo "or Run just step01.genotype.sh, then should be very slow"
+qsub -q js step01.genotype.sh
 
 echo "02.constructe recombiantion bin and draw bin"
 echo "construct recombination bin using MPR package"

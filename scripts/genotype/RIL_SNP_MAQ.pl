@@ -49,8 +49,8 @@ my $parents=$opt{parents} ? $opt{parents} : "$opt{project}.SNPs.parents";
 #if ($opt{parents} and $opt{parents} ne $parents){
 #   `ln -s $opt{parents} $opt{project}.SNPs.parents`;
 #}
-RILgenotype(\@map,$parents); ## call SNPs for RILs based on SNPs of parents, which means only the SNPs exists parents will be called
-
+#RILgenotype(\@map,$parents); ## call SNPs for RILs based on SNPs of parents, which means only the SNPs exists parents will be called
+RILgenotype_effecient(\@map,$parents);  ### use this effeciency subfunction instead, which read pileup.SNP if exists.
 
 
 ####
@@ -179,6 +179,130 @@ close OUT1;
 close OUT2;
 }# end of sub function
 
+
+#### parsing pileup file is slow. So we store the parse result in file and read it when it exists.
+sub RILgenotype_effecient
+{
+my ($map,$parents)=@_;
+my $refparents=parents($parents);
+my @RIL;
+my %hash;
+open TEMP, ">temp.pileup.list" or die "$!"; 
+for(my $i=0; $i< @$map; $i++){
+my $rils=$1 if ($map->[$i]=~/\/(GN\d+)\.Maq\.p1\.map/); #../input/fastq/012/GN1.Maq.p1.map
+push @RIL, $rils;
+print TEMP "$rils\n";
+`$maq pileup -vP -q 40 $opt{ref}.bfa $map->[$i] | awk '\$4 > 0' > $map->[$i].pileup` unless (-e "$map->[$i].pileup");
+#`grep "chromosome05" $map->[$i].pileup | awk '\$4 > 0' > $map->[$i].pileup.chr05` unless (-e "$map->[$i].pileup.chr05");
+
+unless (-e "$map->[$i].pileup.SNP"){
+my $maxdepth=10; #max depth of one SNP to avoid repetitive sequence regions
+my $minbaseq=20; #min base quality for at least one base of one allele in SNP site
+my $minreads=1;  #min of reads support a allele in SNP site
+my $minsumbq=$minreads*20; #min of sum base quality for each allele in SNP site
+my ($snpID);
+open IN, "$map->[$i].pileup" or die "$!";
+open OUT, ">$map->[$i].pileup.SNP" or die "$!";
+while(<IN>){
+    chomp $_;
+    my @unit=split("\t",$_);
+    next if ($unit[3] >= $maxdepth or $unit[3] == 0); ## possible repetitive regions or uncovered
+    $unit[0]=~s/\D+//ig;
+    $unit[1]=sprintf("%08d",$unit[1]);
+    $snpID=$unit[0].$unit[1].$unit[2];
+    #print "$snpID\t$_\n";
+    next unless (exists $refparents->{$snpID}); ## SNPs need exists in parents SNPs
+    my @base=split("",$unit[4]);
+    my @qual=split("",$unit[5]);
+    my %allele;
+    for(my $i=1;$i<@base;$i++){
+       if ($base[$i]=~/\,/ or $base[$i]=~/\./){
+          my $qscore=ord($qual[$i])-33;
+          push @{$allele{$unit[2]}}, $qscore;
+       }else{
+          $base[$i]=~tr/atcg/ATCG/;
+          my $qscore=ord($qual[$i])-33;
+          push @{$allele{$base[$i]}}, $qscore;
+       }
+    }
+    #print "$snpID\tcheck2\n";
+    if (keys %allele == 1){  ##only have one alleles in SNP site, what if the coverage if deep, say ~6. how to deal with heterozygous or can not deal with. Random one?
+       my @SNP=keys %allele;
+       #print "$snpID\t$SNP[0]\t$refparents->{$snpID}->[0]\t$refparents->{$snpID}->[1]\n";
+       next unless ($SNP[0] eq $refparents->{$snpID}->[0] or $SNP[0] eq $refparents->{$snpID}->[1]); ## SNPs need to one of the parents SNPs
+       my %maxbq; my %sumbq; my %maxreads;
+       foreach my $a (keys %allele){
+          $maxreads{$a}=@{$allele{$a}};
+          $maxbq{$a}=max(\@{$allele{$a}});
+          $sumbq{$a}=sum(\@{$allele{$a}});
+          #print "$a\t$maxreads{$a}\t$maxbq{$a}\t$sumbq{$a}\n";
+       } 
+       my $flag1;my $flag2; my $flag3;
+       foreach my $v (values %maxreads){
+          $flag1++ if $v >= $minreads; ## reads depth larger than $minreads==4 for each allele
+       }
+       foreach my $q (values %maxbq){ 
+          $flag2++ if $q >= $minbaseq; ## at least have a base quality larger than $minbaseq==20 for each allele  
+       }
+       foreach my $q (values %sumbq){
+          $flag3++ if $q >= $minsumbq; ## sum of base quality larger than $minsumbq==60 for each allele
+       }
+       #print "$snpID\t$rils\t$SNP[0]\t$flag1\t$flag2\t$flag3\n";
+       if ($flag1 == 1 and $flag2 == 1 and $flag3 ==1){ ## need to meet all three criteria for both allele
+          #print OUT "$snpID\t$SNP\n";
+          #print "$snpID\t$rils\t$SNP[0]\n";
+          $hash{$snpID}{$rils}=$SNP[0];
+          print OUT "$snpID\t$rils\t$SNP[0]\n"; 
+       }
+    }
+}#while loop
+close IN;
+close OUT;
+}else{ ###### *.pileup.SNP exists, just parse this file and store SNP in %hash
+    open IN, "$map->[$i].pileup.SNP" or die "$!";
+    while(<IN>){ 
+        chomp $_;
+        next if ($_=~/^$/);
+        my @unit=split("\t",$_);
+        $hash{$unit[0]}{$unit[1]}=$unit[2];
+    }
+    close IN;
+}
+
+
+}# for loop
+close TEMP;
+
+
+
+print "output genotype\n";
+## write SNPs of RILs into file
+open OUT, ">$opt{project}.SNPs.RILs" or die "$!";
+open OUT1, ">$opt{project}.SNPs.sub.parents" or die "$!";
+open OUT2, ">$opt{project}.SNPs.sub.Marker";
+print OUT1 "V1\tV2\n";
+print OUT2 "SNP_id\tAllele\n";
+my $head=join("\t",@RIL);
+print OUT "$head\n";
+foreach my $snp (sort {$a <=> $b} keys %$refparents){
+    #print OUT "$snp\t";
+    my %allele;
+    my @rilsgeno;
+    for (my $i=0; $i<@RIL; $i++ ){
+        my $allele0= $hash{$snp}{$RIL[$i]} ? $hash{$snp}{$RIL[$i]} : "NA";
+        #print "$snp\t$RIL[$i]\t$hash{$snp}{$RIL[$i]}\tALLELE:$allele\n";
+        push @rilsgeno, $allele0;
+        $allele{$allele0}=1 if ($allele0 ne "NA");
+    }
+    my $temp=join("\t",@rilsgeno);
+    print OUT "$snp\t$temp\n" if (keys %allele == 2); ## keep only these biallelic lines
+    print OUT1 "$snp\t$refparents->{$snp}->[0]\t$refparents->{$snp}->[1]\n" if (keys %allele == 2);
+    print OUT2 "$snp\t$refparents->{$snp}->[0]\n" if (keys %allele == 2);
+}
+close OUT;
+close OUT1;
+close OUT2;
+}# end of sub function
 
 
 
