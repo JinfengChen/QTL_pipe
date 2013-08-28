@@ -3,7 +3,7 @@ echo "prepare trait"
 mkdir ../input/trait
 cp /rhome/cjinfeng/HEG4_cjinfeng/RILs/QTL/input/trait/May28_2013.RIL.trait.table ./
 cd ../input/trait
-perl /rhome/cjinfeng/HEG4_cjinfeng/RILs/QTL_pipe/bin/scritps/trait/RIL_trait.pl --trait ../input/trait/May28_2013.RIL.trait.table
+perl /rhome/cjinfeng/HEG4_cjinfeng/RILs/QTL_pipe/bin/scripts/trait/RIL_trait.pl --trait ../input/trait/May28_2013.RIL.trait.table
 
 
 echo "prepare reference"
@@ -12,7 +12,7 @@ cd ../input/reference
 ln -s /rhome/cjinfeng/HEG4_cjinfeng/RILs/Depth_Evaluation/input/HEG4_dbSNP.vcf ./
 ln -s /rhome/cjinfeng/HEG4_cjinfeng/seqlib/MSU7.chr.inf ./
 ln -s /rhome/cjinfeng/HEG4_cjinfeng/seqlib/MSU_r7.fa ./
-perl /rhome/cjinfeng/HEG4_cjinfeng/RILs/QTL_pipe/bin/scritps/reference/formatfa.pl --fa MSU_r7.fa --project Nipponbare
+perl /rhome/cjinfeng/HEG4_cjinfeng/RILs/QTL_pipe/bin/scripts/reference/formatfa.pl --fa MSU_r7.fa --project Nipponbare
 rm MSU_r7.fa
 ln -s MSU_r7.reform.fa MSU_r7.fa
 
@@ -22,6 +22,7 @@ mkdir ../input/fastq/
 cd ../input/fastq/
 ln -s /rhome/cjinfeng/Rice/RIL/Illumina/ ./
 mkdir RIL_0.5X
+cd ../../bin/
 bash step00.prefastq.sh
 
 echo "00.Mapping reads and pileup"
@@ -43,11 +44,14 @@ qsub -q js step01.genotype.sh
 echo "or Run just step01.genotype.sh, then should be very slow"
 qsub -q js step01.genotype.sh
 
+echo "get sub trait"
+perl scripts/trait/subtrait.pl --trait ../input/trait/May28_2013.RIL.trait.table.QTL.trait.txt --maqlist MAQ.sampleRIL.list > ../input/trait/May28_2013.RIL.trait.table.QTL.trait.txt.first
+
 echo "02.constructe recombiantion bin and draw bin"
 echo "construct recombination bin using MPR package"
-cat /rhome/cjinfeng/HEG4_cjinfeng/RILs/QTL_pipe/bin/scritps/recombination_map/MPR_hmmrun.R | /rhome/cjinfeng/software/tools/R-2.15.3/bin/R --slave
+cat /rhome/cjinfeng/HEG4_cjinfeng/RILs/QTL_pipe/bin/scripts/recombination_map/MPR_hmmrun.R | /rhome/cjinfeng/software/tools/R-2.15.3/bin/R --slave
 #draw bin map for each RILs and for each chromosome
-perl /rhome/cjinfeng/HEG4_cjinfeng/RILs/QTL_pipe/bin/scritps/recombination_map/RIL_drawbin.pl --MPR ./ --chrlen ../input/reference/MSU7.chr.inf
+perl /rhome/cjinfeng/HEG4_cjinfeng/RILs/QTL_pipe/bin/scripts/recombination_map/RIL_drawbin.pl --MPR ./ --chrlen ../input/reference/MSU7.chr.inf
 echo "Or run two step in qsub"
 qsub -q js step02.recombination_bin.sh
 

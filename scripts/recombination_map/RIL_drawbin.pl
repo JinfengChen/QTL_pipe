@@ -609,6 +609,6 @@ my ($svg,$name)=@_;
 open OUT,">$name\.svg";
 print OUT $svg->xmlify;
 close OUT;
-system("/rhome/cjinfeng/software/tools/draw/svg2xxx_release/svg2xxx -t pdf -m 3024 $name.svg");
+system("/rhome/cjinfeng/software/tools/draw/svg2xxx_release/svg2xxx -t pdf -m 1024 $name.svg");
 }
  

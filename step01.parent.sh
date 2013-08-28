@@ -6,7 +6,9 @@
 cd $PBS_O_WORKDIR
 scripts=$PBS_O_WORKDIR/scripts
 
-perl $scripts/genotype/RIL_VCF2Parents.pl --vcf ../input/reference/HEG4_dbSNP.vcf
+#perl $scripts/genotype/RIL_VCF2Parents.pl --vcf ../input/reference/HEG4_dbSNP.vcf
+#perl $scripts/genotype/RIL_VCF2Parents.pl --vcf ../input/reference/HEG4_dbSNP.VQSR.vcf
+perl $scripts/genotype/RIL_VCF2Parents.pl --vcf ../input/reference/ALL.gatk.snp.pass.vcf
 
 echo "done"
 

@@ -31,7 +31,7 @@ unless (-e "$opt{ref}.bfa"){
 
 my @cmd;
 ## mapping by MAQ
-open OUT, ">step00.sampleRIL.list" or die "$!";
+open OUT, ">MAQ.sampleRIL.list" or die "$!";
 foreach my $fq1 (@fastq){
    if ($fq1=~/(.*)_1.fq/){
       my $line=$1;
@@ -52,10 +52,10 @@ foreach my $fq1 (@fastq){
 close OUT;
 
 if(@cmd > 4){
-open OUT, ">step00.maq.sh" or die "$!";
+open OUT, ">maq.sh" or die "$!";
 for(my $i=0; $i<@cmd; $i++){
    print OUT "$cmd[$i]\n";
 }
 close OUT;
-`perl /rhome/cjinfeng/software/bin/qsub-pbs.pl --convert no --lines 4 --resource nodes=1:ppn=1,mem=2G,walltime=100:00:00 step00.maq.sh`;
+`perl /rhome/cjinfeng/software/bin/qsub-pbs.pl --convert no --lines 4 --resource nodes=1:ppn=1,mem=2G,walltime=100:00:00 maq.sh`;
 }

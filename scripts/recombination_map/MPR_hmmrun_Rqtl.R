@@ -1,6 +1,7 @@
 library(Biobase)
 library(MPR)
 pdf("NB.RILs.pdf")
+if (0){
 #################################################################################
 #step.0 load data
 ## load SNP alleles at putative SNP sites
@@ -97,13 +98,15 @@ geno.data.bin <- genoToBin(geno.data.subset,base.position=snpSite,corrected=TRUE
 ## genptype bins with missing data
 str(geno.bin <- geno.data.bin[[2]])
 write.table(geno.bin,"MPR.geno.bin",sep="\t",col.names=NA)
-
+}####skip all the previous steps
 #################################################################################
 #step.5 fill missing data in bin map
 library(qtl)
+#modify the first line of MPR.geno.bin by deleting the first empty element
+as.matrix(read.table("MPR.geno.bin")) -> geno.bin
 #/rhome/cjinfeng/software/tools/MPR/MPR_data/phenoData.txt
 #phenoData<-as.matrix(read.table("/rhome/cjinfeng/software/tools/MPR/MPR_data/phenoData.txt",header=T,row.name=1))
-phenoData<-as.matrix(read.table("/rhome/cjinfeng/HEG4_cjinfeng/RILs/QTL_pipe/input/trait/May28_2013.RIL.trait.table.QTL.trait.txt.first",header=T,sep="\t",row.name=1))
+phenoData<-as.matrix(read.table("/rhome/cjinfeng/HEG4_cjinfeng/RILs/QTL_pipe/input/trait/May28_2013.RIL.trait.table.QTL.trait.txt.first",sep="\t",header=T,row.name=1))
 
 ## Attention!!!!! the name of SNP MUST BE started with ten numeric characters, the first two characters for chromosome and the other eight charactes for physical position of the SNP, otherwise you have to modify the code of geno2Cross (the row assigning value to myGeno.site)
 summary(myCrossData <- geno2Cross(geno.bin,phenoData))
@@ -137,9 +140,6 @@ cross.uniq <- geno2Cross(geno.uniq,phenoData)
 uniq.Map <- est.map(cross.uniq, error.prob=0.00, map.function=c("haldane","kosambi","c-f","morgan")[1], m=0, p=0, maxit=1000, tol=1e-6, sex.sp=FALSE, verbose=FALSE, omit.noninformative=TRUE)
 cross.uniq <- replace.map(cross.uniq, uniq.Map)
 cross.uniq <- calc.genoprob(cross.uniq,error.prob=0.00)
-
-summary(uniq.Map)
-plot.map(uniq.Map)
 
 ##write genotype bin, fill bin and combined bin data into files
 write.cross(cross.data,"csv","MPR.cross")

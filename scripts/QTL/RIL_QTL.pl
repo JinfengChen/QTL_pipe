@@ -33,6 +33,7 @@ my $flag= $type eq "qtlcart" ? 1 : 0;
 my $cmd =<<R;
 library(qtl)
 pdf ("$opt{project}.QTL.pdf")
+nph <- 10 ## number of phenotype
 ## step0. read and write the data of cross
 if ($flag){
    read.cross("qtlcart",dir="./",file="$qtl.cro",mapfile="$qtl.map") -> $cross
@@ -54,41 +55,69 @@ write.cross($cross.reestimate,"qtlcart","$opt{project}.reestimatemap")
 
 ## step1. do single QTL analysis
 ## 1.1 marker regression
-QTL.mr <- scanone($cross,pheno.col=c(1,2,3,4,5),method="mr")
+QTL.mr <- scanone($cross,pheno.col=1:nph,method="mr")
 
 ## 1.2 do interval method stardand invertal mapping(em), Haley-Knott regression (hk), Extended HK regression (ehk), and Multiple imputation (imp)
 $cross <- calc.genoprob($cross,step=1,error.prob=0.001)
 
 ## 1.2.1 estimate the threshold of LOD using permutation test
-operm <- scanone($cross,pheno.col=c(1,2,3,4,5),n.perm=100, verbose=FALSE)
+operm <- scanone($cross,pheno.col=1:nph,n.perm=100, verbose=FALSE)
 LOD <- summary(operm,alpha=0.05) ## get LOD threshold
-QTL.mr.test <- summary(QTL.mr,perms=operm,alpha=0.05,pvalues=TRUE)
-#if (FALSE){
+QTL.mr.test <- summary(QTL.mr,perms=operm,alpha=0.05,format="allpeak",pvalues=TRUE)
+
 ## 1.2.2 interval mapping
-QTL.em <- scanone($cross, pheno.col=c(1,2,3,4,5),method="em")
+QTL.em <- scanone($cross, pheno.col=1:nph,method="em")
 if (1){
-QTL.hk <- scanone($cross, pheno.col=c(1,2,3,4,5),method="hk")
-QTL.ehk <- scanone($cross, pheno.col=c(1,2,3,4,5),method="ehk")
+QTL.hk <- scanone($cross, pheno.col=1:nph,method="hk")
+QTL.ehk <- scanone($cross, pheno.col=1:nph,method="ehk")
 $cross.imp <- sim.geno($cross,step=1,n.draws=64,error.prob=0.001)
-QTL.imp <- scanone($cross.imp,pheno.col=c(1,2,3,4,5), method="imp")
+QTL.imp <- scanone($cross.imp,pheno.col=1:nph, method="imp")
 }
 ## 1.2.3 compostion interval mapping
-#QTL.cim.20 <- cim($cross,pheno.col=c(1,2,3,4,5),n.marcovar=3,window=20)
+#QTL.cim.20 <- cim($cross,pheno.col=1:nph,n.marcovar=3,window=20)
 #QTL.cim.20.test <- summary(QTL.cim.20,perms=operm,pvalues=TRUE)
 
-if (FALSE){
-
+if (TRUE){ ###QTL effect switch
 ## 1.2.4 estimate QTL effect
-QTL.cim.20.final <- summary(QTL.cim.20,perms=operm,alpha=0.2,pvalues=TRUE)
-qtl <- makeqtl($cross.imp,chr=QTL.cim.20.final\$chr,pos=QTL.cim.20.final\$pos)
-qtlname <- paste(qtl\$altname,collapse="+")
-formula <- paste("y~",qtlname)
-qtlfit <- fitqtl($cross.imp,qtl=qtl,formula=formula,get.ests=TRUE)
-qtlvar <- qtlfit\$result.drop[,4]
-qtleffect <- c(qtlfit\$ests\$ests[2],qtlfit\$ests\$ests[4])
-qtlsummary <- cbind(QTL.cim.20.final, qtlvar, qtleffect)
 
+cross.imp <- sim.geno(cross,step=1,n.draws=64,error.prob=0.001)
+cross.imp.jit <- cross.imp
+#cross.imp.jit <- jittermap(cross.imp)
+#cross.imp.jit <- sim.geno(cross.imp.jit,step=1,n.draws=64,error.prob=0.001)
+
+write.table("QTL summary by fitqtl","$opt{project}.QTL.fit.summary",row.names=FALSE, col.names=FALSE, sep="\t")
+for (i in seq(4,length(QTL.mr.test),by=3)){
+   print (names(QTL.mr.test)[i-1])
+   write.table(names(QTL.mr.test)[i-1],"$opt{project}.QTL.fit.summary",append=TRUE,row.names=FALSE, col.names=FALSE ,sep="\t")
+   select <- (QTL.mr.test[,i] <= 0.05) 
+   chr <- QTL.mr.test[,1][select]
+   pos <- QTL.mr.test[,i-2][select] 
+   pheno <- floor(i/3)
+   if (length (chr) < 1){
+      next
+   }else if(length (chr) == 1){
+      qtl <- makeqtl(cross.imp.jit,chr=chr,pos=pos)
+      fit <- summary(fitqtl(cross.imp.jit,pheno.col=pheno,qtl=qtl,get.ests=TRUE))
+      fitest <- fit\$ests[2:(length(chr)+1)]
+      fitse  <- fit\$ests[(length(chr)+1+2):((length(chr)+1)*2)]
+      fitlod <- fit\$result.full[10]
+      fitvar <- fit\$result.full[13]
+      fitpval <- fit\$result.full[16]
+      
+   }else if (length (chr) > 1){
+      qtl <- makeqtl(cross.imp.jit,chr=chr,pos=pos)
+      fit <- summary(fitqtl(cross.imp.jit,pheno.col=pheno,qtl=qtl,get.ests=TRUE))
+      fitest <- fit\$ests[2:(length(chr)+1)]
+      fitse  <- fit\$ests[(length(chr)+1+2):((length(chr)+1)*2)]
+      fitlod <- fit\$result.drop[(length(chr)*2+1):(length(chr)*2+length(chr))]
+      fitvar <- fit\$result.drop[(length(chr)*3+1):(length(chr)*3+length(chr))]
+      fitpval <- fit\$result.drop[(length(chr)*5+1):(length(chr)*5+length(chr))]
+   }
+   fitsum <- cbind(chr,pos,fitlod,fitvar,fitpval,fitest,fitse)
+   print (fitsum)
+   write.table(fitsum,"$opt{project}.QTL.fit.summary",append=TRUE,row.names=FALSE, col.names=TRUE,sep="\t") 
 }
+}### QTL effect switch
 
 ## 2 write result into table and pdf
 ## 2.1 write QTL loci and LOD into table
@@ -107,7 +136,7 @@ write.table(QTL.imp,"$opt{project}.QTL.imp.table",sep="\t",col.names=NA)
 
 ## 2.2 write QTL curves into pdf
 #pdf ("$opt{project}.QTL.pdf")
-for (trait in 1:5){
+for (trait in 1:nph){
      traitname <- colnames(cross\$pheno)[trait]
      ## draw all chr together
      chr <- 1:12 
