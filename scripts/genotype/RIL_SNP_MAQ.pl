@@ -88,7 +88,7 @@ push @RIL, $rils;
 print TEMP "$rils\n";
 `$maq pileup -vP -q 40 $opt{ref}.bfa $map->[$i] | awk '\$4 > 0' > $map->[$i].pileup` unless (-e "$map->[$i].pileup");
 #`grep "chromosome05" $map->[$i].pileup | awk '\$4 > 0' > $map->[$i].pileup.chr05` unless (-e "$map->[$i].pileup.chr05");
-my $maxdepth=10; #max depth of one SNP to avoid repetitive sequence regions
+my $maxdepth=20; #max depth of one SNP to avoid repetitive sequence regions
 my $minbaseq=20; #min base quality for at least one base of one allele in SNP site
 my $minreads=1;  #min of reads support a allele in SNP site
 my $minsumbq=$minreads*20; #min of sum base quality for each allele in SNP site
@@ -109,11 +109,11 @@ while(<IN>){
     for(my $i=1;$i<@base;$i++){
        if ($base[$i]=~/\,/ or $base[$i]=~/\./){
           my $qscore=ord($qual[$i])-33;
-          push @{$allele{$unit[2]}}, $qscore;
-       }else{
+          push (@{$allele{$unit[2]}}, $qscore ) if ($qscore >= 15); ### do not count if quality is too poor
+       }elsif($base[$i]=~/[acgtACGT]/){
           $base[$i]=~tr/atcg/ATCG/;
           my $qscore=ord($qual[$i])-33;
-          push @{$allele{$base[$i]}}, $qscore;
+          push (@{$allele{$base[$i]}}, $qscore ) if ($qscore >= 15); ### do not count if quality is too poor
        }
     }
     #print "$snpID\tcheck2\n";
@@ -196,7 +196,7 @@ print TEMP "$rils\n";
 #`grep "chromosome05" $map->[$i].pileup | awk '\$4 > 0' > $map->[$i].pileup.chr05` unless (-e "$map->[$i].pileup.chr05");
 
 unless (-e "$map->[$i].pileup.SNP"){
-my $maxdepth=10; #max depth of one SNP to avoid repetitive sequence regions
+my $maxdepth=20; #max depth of one SNP to avoid repetitive sequence regions
 my $minbaseq=20; #min base quality for at least one base of one allele in SNP site
 my $minreads=1;  #min of reads support a allele in SNP site
 my $minsumbq=$minreads*20; #min of sum base quality for each allele in SNP site
@@ -218,11 +218,11 @@ while(<IN>){
     for(my $i=1;$i<@base;$i++){
        if ($base[$i]=~/\,/ or $base[$i]=~/\./){
           my $qscore=ord($qual[$i])-33;
-          push @{$allele{$unit[2]}}, $qscore;
-       }else{
+          push (@{$allele{$unit[2]}}, $qscore ) if ($qscore >= 15); ### do not count if quality is too poor
+       }elsif($base[$i]=~/[acgtACGT]/){
           $base[$i]=~tr/atcg/ATCG/;
           my $qscore=ord($qual[$i])-33;
-          push @{$allele{$base[$i]}}, $qscore;
+          push (@{$allele{$base[$i]}}, $qscore ) if ($qscore >= 15);
        }
     }
     #print "$snpID\tcheck2\n";
