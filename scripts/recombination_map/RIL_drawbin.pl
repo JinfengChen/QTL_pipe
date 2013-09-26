@@ -45,7 +45,8 @@ my $refparents =readparents("$opt{MPR}/MPR.allele.MPR");
 foreach my $rils (sort keys %$refgeno){
    print "$rils\n";
    $rils=~s/\"//g;
-   next unless ($rils=~/GN1.*/ or $rils=~/MZ00.*/);
+   next;
+   #next unless ($rils=~/GN15\d{1}$/ or $rils=~/MZ00.*/);
    #next unless ($rils=~/M.*/);
    my $svg=SVG->new(width=>$width,height=>$height);
    my $xstart=100; my $ystart=0; my $count=0; 
@@ -609,6 +610,6 @@ my ($svg,$name)=@_;
 open OUT,">$name\.svg";
 print OUT $svg->xmlify;
 close OUT;
-system("/rhome/cjinfeng/software/tools/draw/svg2xxx_release/svg2xxx -t pdf -m 1024 $name.svg");
+system("/rhome/cjinfeng/software/tools/draw/svg2xxx_release/svg2xxx -t pdf -m 2000 $name.svg > step02.recombination_bin.sh.svg.draw 2> step02.recombination_bin.sh.svg.draw2");
 }
  

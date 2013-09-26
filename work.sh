@@ -47,6 +47,10 @@ qsub -q js step01.genotype.sh
 
 echo "get sub trait"
 perl scripts/trait/subtrait.pl --trait ../input/trait/May28_2013.RIL.trait.table.QTL.trait.txt --maqlist MAQ.sampleRIL.list > ../input/trait/May28_2013.RIL.trait.table.QTL.trait.txt.first
+perl scripts/trait/subtrait.pl --trait ../input/trait/May28_2013.RIL.trait.table.QTL.trait.txt.ALL --maqlist BWA.sampleRIL.list > ../input/trait/May28_2013.RIL.trait.table.QTL.trait.txt.first
+echo "trait correlation"
+python scripts/trait/TraitCorrelation.py --input ../input/trait/May28_2013.RIL.trait.table.QTL.trait.txt.ALL > trait.cr.txt
+python ../../bin/scripts/trait/TraitPlot.py --trait May28_2013.RIL.trait.table.QTL.trait.txt.ALL --parent May28_2013.RIL.trait.table.QTL.parents.txt
 
 echo "02.constructe recombiantion bin and draw bin"
 echo "construct recombination bin using MPR package"
