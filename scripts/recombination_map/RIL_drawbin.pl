@@ -61,7 +61,7 @@ foreach my $rils (sort keys %$refgeno){
       drawgenohmm($svg,$xstart,$ystart-2*($binh+5),$binh,$refgenohmm->{$rils}->{$chr0},$bp_per_pix);
       drawbin($svg,$xstart,$ystart-4*($binh+5),$binh,$refbin->{$rils}->{$chr0},$bp_per_pix);
       drawbin($svg,$xstart,$ystart-5*($binh+5),$binh,$refbinfill->{$rils}->{$chr0},$bp_per_pix);
-      #drawbin($svg,$xstart,$ystart-5*($binh+5),$binh,$refbinuniq->{$rils}->{$chr0},$bp_per_pix); 
+      drawbin($svg,$xstart,$ystart-5*($binh+5),$binh,$refbinuniq->{$rils}->{$chr0},$bp_per_pix); 
       drawcent($svg,$chrlen->{$chr}->[1],$chrlen->{$chr}->[2],$xstart,$ystart,$bp_per_pix);
       plot_ruler("svg",$svg,"Y",$ystart+10, "X_start",$xstart,"X_end",$xstart+$len/$bp_per_pix,"bp_start",0,"bp_end",$len,"scaletype","Mb","scaletypepos","right","scalestart","force","rulerstyle",2);
       drawtitle($svg,$xstart-50,$ystart,10,$chr);
@@ -108,7 +108,8 @@ foreach my $chr0 (sort keys %$refbin2){
    my $svg=SVG->new(width=>$width2,height=>$height2);
    my $xstart=100; my $ystart=0; my $count=0;
    plot_ruler("svg",$svg,"Y",$ystart+10, "X_start",$xstart,"X_end",$xstart+$len/$bp_per_pix,"bp_start",0,"bp_end",$len,"scaletype","Mb","scaletypepos", "right","scalestart","force","rulerstyle",2);
-   #print "$chr\tDraw this chromosome\n";
+   print "$chr\tDraw this chromosome\n";
+   #next; #### just test for input data
    my $max=0;
    my %linepos;##record bin line position
    foreach my $rils (sort keys %{$refbin2->{$chr0}}){
@@ -610,6 +611,6 @@ my ($svg,$name)=@_;
 open OUT,">$name\.svg";
 print OUT $svg->xmlify;
 close OUT;
-system("/rhome/cjinfeng/software/tools/draw/svg2xxx_release/svg2xxx -t pdf -m 2000 $name.svg > step02.recombination_bin.sh.svg.draw 2> step02.recombination_bin.sh.svg.draw2");
+system("/rhome/cjinfeng/software/tools/draw/svg2xxx_release/svg2xxx -t pdf -m 10000 $name.svg > step02.recombination_bin.sh.svg.draw 2> step02.recombination_bin.sh.svg.draw2");
 }
  

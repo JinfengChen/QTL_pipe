@@ -33,7 +33,7 @@ my $flag= $type eq "qtlcart" ? 1 : 0;
 my $cmd =<<R;
 library(qtl)
 pdf ("$opt{project}.QTL.pdf")
-nph <- 10 ## number of phenotype
+nph <- 18 ## number of phenotype
 ## step0. read and write the data of cross
 if ($flag){
    read.cross("qtlcart",dir="./",file="$qtl.cro",mapfile="$qtl.map") -> $cross

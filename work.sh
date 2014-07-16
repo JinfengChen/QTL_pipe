@@ -45,6 +45,10 @@ qsub -q js step01.genotype.sh
 echo "or Run just step01.genotype.sh, then should be very slow"
 qsub -q js step01.genotype.sh
 
+echo "add mping and cold trait"
+perl scripts/trait/AddmPingTrait.pl --mping ../input/trait/Oct10_2013.mPing.table
+perl scripts/trait/AddmPingTrait_USDA.pl
+
 echo "get sub trait"
 perl scripts/trait/subtrait.pl --trait ../input/trait/May28_2013.RIL.trait.table.QTL.trait.txt --maqlist MAQ.sampleRIL.list > ../input/trait/May28_2013.RIL.trait.table.QTL.trait.txt.first
 perl scripts/trait/subtrait.pl --trait ../input/trait/May28_2013.RIL.trait.table.QTL.trait.txt.ALL --maqlist BWA.sampleRIL.list > ../input/trait/May28_2013.RIL.trait.table.QTL.trait.txt.first

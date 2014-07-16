@@ -27,9 +27,9 @@ my ($file,$parent)=@_;
 my $refparents=parents($parent);
 my $rils=$1 if ($file=~/\/(GN\d+)\.Maq\.p1\.map\.pileup/ or $file=~/(GN\d+)\.Maq\.p1\.map\.pileup/); #../input/fastq/012/GN1.Maq.p1.map
 my $maxdepth=50; #max depth of one SNP to avoid repetitive sequence regions
-my $minbaseq=20; #min base quality for at least one base of one allele in SNP site
+my $minbaseq=10; #min base quality for at least one base of one allele in SNP site
 my $minreads=1;  #min of reads support a allele in SNP site
-my $minsumbq=$minreads*20; #min of sum base quality for each allele in SNP site
+my $minsumbq=$minreads*10; #min of sum base quality for each allele in SNP site
 my ($snpID);
 open IN, "$file" or die "$!";
 open OUT, ">$file.SNP" or die "$!";
@@ -49,11 +49,11 @@ while(<IN>){
     for(my $i=1;$i<@base;$i++){
        if ($base[$i]=~/\,/ or $base[$i]=~/\./){
           my $qscore=ord($qual[$i])-33;
-          push (@{$allele{$unit[2]}}, $qscore ) if ($qscore >= 15); ### do not count if quality is too poor
+          push (@{$allele{$unit[2]}}, $qscore ) if ($qscore >= 10); ### do not count if quality is too poor
        }elsif($base[$i]=~/[acgtACGT]/){
           $base[$i]=~tr/atcg/ATCG/;
           my $qscore=ord($qual[$i])-33;
-          push (@{$allele{$base[$i]}}, $qscore ) if ($qscore >= 15); ### do not count if quality is too poor
+          push (@{$allele{$base[$i]}}, $qscore ) if ($qscore >= 10); ### do not count if quality is too poor
        }
     }
     #print "$snpID\tcheck2\n";
