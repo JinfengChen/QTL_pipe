@@ -28,8 +28,12 @@ my ($map)=@_;
 my @cmd;
 my $maq="/opt/tyler/bin/maq";
 my $samtools="/usr/local/bin/samtools";
+open LIST, ">BWA.sampleRIL.list" or die "$!";
 for(my $i=0; $i< @$map; $i++){
    my $prefix=$1 if ($map->[$i]=~/(.*)\.bam$/);
+   if ($prefix=~/\/(\w+)$/){
+       print LIST "$1\n";
+   }
    push @cmd, "$samtools mpileup -q 40 -Q 15 -f $opt{ref} $map->[$i] | awk '\$4 > 0' > $prefix.Maq.p1.map.pileup" unless (-e "$prefix.Maq.p1.map.pileup.SNP");
    open OUT, ">pileup.sh" or die "$!";
    for(my $i=0; $i<@cmd; $i++){
@@ -37,6 +41,7 @@ for(my $i=0; $i< @$map; $i++){
    }
    close OUT;
 }# for loop
+close LIST;
 `perl /rhome/cjinfeng/software/bin/qsub-pbs.pl --convert no --maxjob 10 --resource nodes=1:ppn=1,mem=5G,walltime=100:00:00 pileup.sh`;
 }# end of sub function
 
