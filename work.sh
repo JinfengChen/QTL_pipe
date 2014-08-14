@@ -68,3 +68,11 @@ echo "03.QTL"
 qsub -q js step03.QTL.sh
 
 
+
+echo "Use bam files from Sofia directly"
+qsub step01.parent.sh
+bash step01.bam2snp.sh
+qsub step01.genotype.sh
+qsub -q js step02.recombination_bin.sh
+qsub step03.QTL.sh
+
