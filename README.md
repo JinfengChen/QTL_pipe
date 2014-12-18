@@ -17,6 +17,10 @@ parse trait file, generate trait matrix for parents and RILs, draw distribution 
 
      perl /rhome/cjinfeng/HEG4_cjinfeng/RILs/QTL_pipe/bin/scritps/trait/RIL_trait.pl --trait ../input/trait/May28_2013.RIL.trait.table
 
+Get subtrait, which only these have sequence will collect in a file (run after mapping)
+
+     perl scripts/trait/subtrait.pl --trait ../input/trait/May28_2013.RIL.trait.table.QTL.trait.txt --maqlist MAQ.sampleRIL.list > ../input/trait/May28_2013.RIL.trait.table.QTL.trait.txt.first
+
 The results files will be in "trait dir":
 
 May28_2013.RIL.trait.table.QTL.parents.txt
@@ -93,6 +97,35 @@ Convert SNPs into parents files, which will be used to genotype the RILs.
 Genotype Maq results of RILs using parents file 
 
 	perl $scritps/genotype/RIL_SNP_MAQ.pl --ref ../input/reference/MSU_r7.fa --fastq ../input/fastq/RILs_0.5X --parents NB.RILs.dbSNP.SNPs.parents
+
+****But pileup and convert pileup to SNP alway very slow, we speed up the process by qsub
+Run shell "step01.parent.sh" using qsub
+
+        qsub -q js step01.parent.sh
+
+which include this step to generate parents SNPs from VCF
+ 
+        perl $scritps/genotype/RIL_VCF2Parents.pl --vcf ../input/reference/HEG4_dbSNP.vcf
+
+Run shell "step01.pileup.sh and step01.snp.sh" using bash
+
+        bash step01.pileup.sh, no need to run because already build in mapping step
+
+        bash step01.snp.sh
+
+which include these two steps:
+
+        perl /rhome/cjinfeng/HEG4_cjinfeng/RILs/QTL_pipe/bin/scripts/genotype/RIL_SNP_MAQ_pileup.pl --ref /rhome/cjinfeng/HEG4_cjinfeng/RILs/QTL_pipe/input/reference/MSU_r7.fa --fastq /rhome/cjinfeng/HEG4_cjinfeng/RILs/QTL_pipe/input/fastq/RILs_0.5X
+
+        perl /rhome/cjinfeng/HEG4_cjinfeng/RILs/QTL_pipe/bin/scripts/genotype/RIL_SNP_MAQ_snp.pl --ref /rhome/cjinfeng/HEG4_cjinfeng/RILs/QTL_pipe/input/reference/MSU_r7.fa --parent /rhome/cjinfeng/HEG4_cjinfeng/RILs/QTL_pipe/bin/NB.RILs.dbSNP.SNPs.parents --fastq /rhome/cjinfeng/HEG4_cjinfeng/RILs/QTL_pipe/input/fastq/RILs_0.5X
+        
+Run shell "step01.genotype.sh" using qsub
+
+        qsub -q js step01.genotype.sh
+
+which include this step:
+ 
+        perl $scritps/genotype/RIL_SNP_MAQ.pl --ref ../input/reference/MSU_r7.fa --fastq ../input/fastq/RILs_0.5X --parents NB.RILs.dbSNP.SNPs.parents
 
 The output files:
 

@@ -12,7 +12,7 @@ from Bio import SeqIO
 def usage():
     test="name"
     message='''
-python NeedCare.py > NeedCare.inf
+python inf_scripts/NeedCare.py > NeedCare.bam.inf
 
 Generate summary for sequence coverage and percentage of NA for SNPs. 
 RIL	Qual	Coverage	PercentOfNA
@@ -57,7 +57,9 @@ def fq_qual(rils):
             cmd = 'perl /rhome/cjinfeng/software/bin/fastqformatdetect.pl ' + fq
             status, fqformat = commands.getstatusoutput(cmd)
             unit = re.split(r' ', fqformat) 
-            data[ril]=unit[3]  
+            data[ril]=unit[3]
+        else:
+            data[ril]='sanger' 
     return data
  
 '''
@@ -66,8 +68,8 @@ GN1     GN10    GN100   GN101   GN102   GN103   GN104   GN105   GN106   GN107   
 0100031071A     NA      G       A       A       A       A       G       G       G       G       NA      A
 '''
 def snpmatrix(infile):
-    data = defaultdict(int)
-    data1 = defaultdict(lambda: float)
+    data = defaultdict(lambda : int())
+    data1 = defaultdict(lambda: float())
     rils = []
     total = 0
     s = re.compile(r'GN(\d+)')
@@ -78,20 +80,27 @@ def snpmatrix(infile):
             if line.startswith('GN') and m: 
                 unit = re.split(r'\t',line)
                 rils = [a.replace('GN','') for a in unit]
+                print 'Number of RILs:', len(rils)
             elif len(line) > 2:
                 total = total + 1
                 unit = re.split(r'\t',line)
                 unit = unit[1:]
+                #print 'Number of genotype:', len(unit)
                 count = 0
                 for snp in unit: 
                     count = count + 1
+                    #if int(rils[count-1]) == 40:
+                    #    print 'RIL40 SNP:', snp
                     if snp == 'NA':
+                        #if int(rils[count-1]) == 40:
+                        #    print 'Called NA:', snp
+                        #    print data[rils[count-1]]
                         data[rils[count-1]] = int(data[rils[count-1]]) + 1
     
     for ril in data.keys():
         narate = float(data[ril])/float(total)
         data1[ril] = narate
-        #print ril, narate
+        #print ril, data[ril], total, narate
     return data1
 
 
@@ -134,8 +143,8 @@ def main():
     rils = trait('../input/trait/May28_2013.RIL.trait.table.QTL.trait.txt')
     snps = snpmatrix('./NB.RILs.dbSNP.SNPs.RILs')
     qual = fq_qual(rils) 
-    cvg  = fq_cvg('./RIL.fastq.fastq.stat')   
-
+    #cvg  = fq_cvg('./RIL.fastq.fastq.stat')   
+    cvg  = fq_cvg('./inf_list/RIL.bam.unique.stat')
     print "RIL\tQual\tCoverage\tPercentOfNA" 
     for ril in sorted(rils.keys(), key=int):
         coverage = cvg[ril] if cvg[ril] else 'NA'

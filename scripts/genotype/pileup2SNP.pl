@@ -26,7 +26,7 @@ sub convert
 my ($file,$parent)=@_;
 my $refparents=parents($parent);
 my $rils=$1 if ($file=~/\/(GN\d+)\.Maq\.p1\.map\.pileup/ or $file=~/(GN\d+)\.Maq\.p1\.map\.pileup/); #../input/fastq/012/GN1.Maq.p1.map
-my $maxdepth=50; #max depth of one SNP to avoid repetitive sequence regions
+my $maxdepth=100; #max depth of one SNP to avoid repetitive sequence regions
 my $minbaseq=20; #min base quality for at least one base of one allele in SNP site
 my $minreads=1;  #min of reads support a allele in SNP site
 my $minsumbq=$minreads*20; #min of sum base quality for each allele in SNP site
@@ -43,10 +43,18 @@ while(<IN>){
     $snpID=$unit[0].$unit[1].$unit[2];
     #print "$snpID\t$_\n";
     next unless (exists $refparents->{$snpID}); ## SNPs need exists in parents SNPs
+    #remove non-base characters
+    if ($unit[4] =~ /([-|+]+[0-9]+[ACGTNacgtn]+)/){
+        $unit[4] =~ s/([-|+]+[0-9]+[ACGTNacgtn]+)//g;
+    }
+    if ($unit[4] =~ /([^.,ACGTNacgtn]+)/){
+        $unit[4] =~ s/([^.,ACGTNacgtn]+)//g;
+    }
+
     my @base=split("",$unit[4]);
     my @qual=split("",$unit[5]);
     my %allele;
-    for(my $i=1;$i<@base;$i++){
+    for(my $i=0;$i<@base;$i++){
        if ($base[$i]=~/\,/ or $base[$i]=~/\./){
           my $qscore=ord($qual[$i])-33;
           push (@{$allele{$unit[2]}}, $qscore ) if ($qscore >= 15); ### do not count if quality is too poor
@@ -56,7 +64,22 @@ while(<IN>){
           push (@{$allele{$base[$i]}}, $qscore ) if ($qscore >= 15); ### do not count if quality is too poor
        }
     }
-    #print "$snpID\tcheck2\n";
+   
+    #remove minor allele, which probably due to sequencing error or somatic mutations due to high coverage
+    my $flag = keys %allele;
+    my $coverage = 0;
+    for my $tempb (keys %allele){
+       my $tempd = @{$allele{$tempb}};
+       $coverage += $tempd;
+    }
+    for my $tempb (keys %allele){
+       my $tempd = @{$allele{$tempb}};
+       if ($tempd/$coverage <= 0.2 and $coverage >= 5){
+          delete $allele{$tempb};
+       }
+    }
+
+    #print "$snpID\t$flag\tcheck2\n";
     if (keys %allele == 1){  ##only have one alleles in SNP site, what if the coverage if deep, say ~6. how to deal with heterozygous or can not deal with. Random one?
        my @SNP=keys %allele;
        #print "$snpID\t$SNP[0]\t$refparents->{$snpID}->[0]\t$refparents->{$snpID}->[1]\n";

@@ -38,7 +38,8 @@ for(my $i=0; $i< @$map; $i++){
    }
    close OUT;
 }# for loop
-`perl /rhome/cjinfeng/software/bin/qsub-pbs.pl --convert no --maxjob 30 --resource nodes=1:ppn=1,mem=5G,walltime=100:00:00 snp.sh`;
+#`perl /rhome/cjinfeng/software/bin/qsub-pbs.pl --convert no --maxjob 30 --resource nodes=1:ppn=1,mem=5G,walltime=100:00:00 snp.sh`;
+`perl /rhome/cjinfeng/software/bin/qsub-pbs.pl --convert no --maxjob 20 --queue js --resource walltime=100:00:00 snp.sh`;
 }# end of sub function
 
 

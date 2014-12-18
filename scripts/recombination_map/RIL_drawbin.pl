@@ -45,9 +45,10 @@ my $refparents =readparents("$opt{MPR}/MPR.allele.MPR");
 foreach my $rils (sort keys %$refgeno){
    print "$rils\n";
    $rils=~s/\"//g;
-   next;
+   #next;
    #next unless ($rils=~/GN15\d{1}$/ or $rils=~/MZ00.*/);
-   #next unless ($rils=~/M.*/);
+   #next unless ($rils=~/GN131/ or $rils=~/GN80/ or $rils=~/GN83/);
+   next unless ($rils=~/GN242/);
    my $svg=SVG->new(width=>$width,height=>$height);
    my $xstart=100; my $ystart=0; my $count=0; 
    foreach my $chr0 (sort { $a <=> $b } keys %{$refgeno->{$rils}}){
@@ -60,7 +61,7 @@ foreach my $rils (sort keys %$refgeno){
       drawgeno($svg,$xstart,$ystart-($binh+5),$binh,$refgeno->{$rils}->{$chr0},$bp_per_pix);
       drawgenohmm($svg,$xstart,$ystart-2*($binh+5),$binh,$refgenohmm->{$rils}->{$chr0},$bp_per_pix);
       drawbin($svg,$xstart,$ystart-4*($binh+5),$binh,$refbin->{$rils}->{$chr0},$bp_per_pix);
-      drawbin($svg,$xstart,$ystart-5*($binh+5),$binh,$refbinfill->{$rils}->{$chr0},$bp_per_pix);
+      #drawbin($svg,$xstart,$ystart-5*($binh+5),$binh,$refbinfill->{$rils}->{$chr0},$bp_per_pix);
       drawbin($svg,$xstart,$ystart-5*($binh+5),$binh,$refbinuniq->{$rils}->{$chr0},$bp_per_pix); 
       drawcent($svg,$chrlen->{$chr}->[1],$chrlen->{$chr}->[2],$xstart,$ystart,$bp_per_pix);
       plot_ruler("svg",$svg,"Y",$ystart+10, "X_start",$xstart,"X_end",$xstart+$len/$bp_per_pix,"bp_start",0,"bp_end",$len,"scaletype","Mb","scaletypepos","right","scalestart","force","rulerstyle",2);
@@ -71,15 +72,16 @@ foreach my $rils (sort keys %$refgeno){
    `mv $opt{project}.Recombination.Bin.$rils.* $opt{MPR}/MPR_bin`;
 }
 
-my $refgeno2=readgeno2("$opt{MPR}/MPR.geno.data");
-my $refbin2=readbin2("$opt{MPR}/MPR.geno.bin");
-my $refbinfill2 =readbin2("$opt{MPR}/MPR.geno.bin.fill");
-my $refbinuniq2 =readbin2("$opt{MPR}/MPR.geno.bin.uniq");
+#draw chr bin
+#my $refgeno2=readgeno2("$opt{MPR}/MPR.geno.data");
+#my $refbin2=readbin2("$opt{MPR}/MPR.geno.bin");
+#my $refbinfill2 =readbin2("$opt{MPR}/MPR.geno.bin.fill");
+#my $refbinuniq2 =readbin2("$opt{MPR}/MPR.geno.bin.uniq");
 
-drawchrbin($refbin2,$chrlen,$bp_per_pix,"original");
-drawchrbin($refbinfill2,$chrlen,$bp_per_pix,"fill");
-drawchrbin($refbinuniq2,$chrlen,$bp_per_pix,"uniq");
-drawchrSNP($refgeno2,$refparents,$chrlen,$bp_per_pix,"geno");
+#drawchrbin($refbin2,$chrlen,$bp_per_pix,"original");
+#drawchrbin($refbinfill2,$chrlen,$bp_per_pix,"fill");
+#drawchrbin($refbinuniq2,$chrlen,$bp_per_pix,"uniq");
+#drawchrSNP($refgeno2,$refparents,$chrlen,$bp_per_pix,"geno");
 
 
 ###

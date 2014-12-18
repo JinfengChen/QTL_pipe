@@ -1,0 +1,35 @@
+###to deal with noise or some heterozygous site (might not be heterozygous, also noise due to repeat region or disease resistense gene).
+###we set the minimum read coverage to 3 to filter out false alignment for both standard pileup and lowqaulity pileup(#)
+GN1	6X	have some noise
+GN104	3.9X	heterozygous on chr02 19Mb, chr07 21Mb, chr11 18Mb
+GN121	8.7X	probably wrong genotype at chr02 8-10Mb. Some loci have noise.
+GN125	5.7X	probably wrong genotype at chr08 27Mb, end of chromosome.
+GN131	2.25X	Have some noise loci, not high quality.
+GN135	8.9X	Have some noise loci, not high quality.
+GN150	5.75X	heterozygous on chr04 1-3Mb.
+GN154	2.8X	heterozygous on chr04 16-18Mb, chr05 19-24Mb.chr09 7-9Mb.
+*GN164	3.1X	Have some noise loci.
+GN165	6.3X	Have some noise or heterozygous on chr11 17Mb and 24-36Mb?
+GN169	20X	Have some noise on chr11, chr8, chr6 and chr3.
+GN175	6.9X	Have some noise or heterozygous on chr6 23Mb.
+GN180	2.52X	heterozygous on chr06 25-26 Mb.
+GN190	19X	heterozygous or contamination on chr1, chr2, chr3, chr4, chr5, chr8, chr9, chr10, chr11, chr12.
+GN200	6X	Have some noise on chr1 8Mb.
+GN209	17X	heterozygous or contamination on chr1, chr2, chr4, chr5, chr6, chr9 and chr10.
+GN220	2.44X	heterozygous or contamination on chr12, chr8, chr7, chr6, chr5, chr4, chr3, chr2.
+GN223	9X	heterozygous or noise on chr12, chr11, chr7, chr6,chr4.
+#GN231	15X	heterozygous on chr7 and others, but not bad.
+#GN230	7.3X	few noise
+#GN232	3.5X	few noise
+GN240	11X	noise on chr1, chr4, chr3, chr8?
+GN25	6.7X	Have some noise
+GN250	11X	heterozygous on chr1 25 Mb
+GN265	6.3X	heterozygous on chr10 5-12 Mb
+GN267	5.8X	heterozygous on chr02 17-18 Mb.
+#GN268	13.5X	Have some noise.
+#GN277	40X	some noise
+#GN39	57X	some noise
+GN76	6X	heterozygous on chr8 6-8Mb
+#GN80	4.56X	Have some noise
+GN81	9.6X	heterozygous or contamination on chr12, chr11, chr10, chr9, chr8, chr7
+GN83	2.85X	heterozygous on chr11, 7-8Mb

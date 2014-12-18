@@ -1,0 +1,5 @@
+GN58	two libraries are the same, but RIL58_0_CTTGTA has good coverage than RIL58_1_GGCTAC at Ping insertion site.
+GN228	RIL228_0_GATCAG has enough reads but RIL228_0_AGTCAA has too few reads to analyze
+GN243	RIL243_0_CTTGTA has fewer reads (1X)
+GN253	RIL253_0_ATCACG has fewer reads (1X)
+GN278	RIL278_0_TTAGGC has fewer reads (1X)	

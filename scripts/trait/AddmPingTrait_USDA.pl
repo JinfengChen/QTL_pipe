@@ -20,9 +20,9 @@ if ($opt{help}){
 }
 
 $opt{trait} ||= "/rhome/cjinfeng/HEG4_cjinfeng/RILs/QTL_pipe/input/trait/May28_2013.RIL.trait.table.QTL.trait.txt";
-$opt{mping} ||= "/rhome/cjinfeng/HEG4_cjinfeng/RILs/QTL_pipe/input/trait/Oct10_2013.mPing.table";
+$opt{mping} ||= "/rhome/cjinfeng/HEG4_cjinfeng/RILs/QTL_pipe/input/trait/Nev11_2014.mPing.table";
 $opt{cold}  ||= "/rhome/cjinfeng/HEG4_cjinfeng/RILs/QTL_pipe/input/trait/Aug2_2013.Cold.table";
-$opt{ping}  ||= "/rhome/cjinfeng/HEG4_cjinfeng/RILs/QTL_pipe/input/trait/Oct18_2013.Ping.table";
+$opt{ping}  ||= "/rhome/cjinfeng/HEG4_cjinfeng/RILs/QTL_pipe/input/trait/Nev11_2014.Ping.table";
 $opt{usda}  ||= "/rhome/cjinfeng/HEG4_cjinfeng/RILs/QTL_pipe/input/trait/Jan30_2014.USDA.table";
 
 my $refmping=readmping($opt{mping});
@@ -77,7 +77,7 @@ while(<IN>){
     chomp $_;
     next if ($_=~/^$/);
     my @unit=split("\t",$_);
-    my $ril="GN-".$1 if ($unit[0]=~/RIL(\d+)\_\d+/);
+    my $ril="GN-".$1 if ($unit[0]=~/RIL(\d+)/);
     $hash{$ril}=[$unit[1],$unit[2]];
 }
 close IN;

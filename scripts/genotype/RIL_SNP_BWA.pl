@@ -12,10 +12,10 @@ use Getopt::Long;
 use FindBin qw($Bin $Script);
 
 my %opt;
-GetOptions(\%opt,"ref:s","fastq:s","trait:s","split","parents:s","project:s","help");
+GetOptions(\%opt,"fastq:s","trait:s","split","parents:s","project:s","help");
 
 if ($opt{help} or keys %opt < 1){
-   print "Usage: perl $0 --ref ../input/reference/Pseudomolecules_Nipponbare.Build4.0.fasta --fastq ../input/testfastq\n";
+   print "Usage: perl $0 --fastq ../input/fastq/RILs_ALL_bam --parents NB.RILs.dbSNP.SNPs.parents\n";
    exit();
 }
 

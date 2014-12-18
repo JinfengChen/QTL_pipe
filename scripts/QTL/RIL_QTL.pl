@@ -61,7 +61,7 @@ QTL.mr <- scanone($cross,pheno.col=1:nph,method="mr")
 $cross <- calc.genoprob($cross,step=1,error.prob=0.001)
 
 ## 1.2.1 estimate the threshold of LOD using permutation test
-operm <- scanone($cross,pheno.col=1:nph,n.perm=100, verbose=FALSE)
+operm <- scanone($cross,pheno.col=1:nph,n.perm=1000, verbose=FALSE)
 LOD <- summary(operm,alpha=0.05) ## get LOD threshold
 QTL.mr.test <- summary(QTL.mr,perms=operm,alpha=0.05,format="allpeak",pvalues=TRUE)
 
@@ -93,6 +93,24 @@ for (i in seq(4,length(QTL.mr.test),by=3)){
    chr <- QTL.mr.test[,1][select]
    pos <- QTL.mr.test[,i-2][select] 
    pheno <- floor(i/3)
+
+   ###confident interval
+   int_mk1 <- c()
+   int_pos1 <- c()
+   int_mk2 <- c()
+   int_pos2 <- c()
+   n <- (i-4)/3+1
+   for (c in chr){ 
+      interval <- lodint(QTL.mr, c, 1.5, lodcolumn=n, expandtomarkers=TRUE)
+      int_mk1 <- append(int_mk1, paste(rownames(interval)[1],rownames(interval)[3], sep="-"))
+      int_pos1 <- append(int_pos1, paste(interval\$pos[1],interval\$pos[3],sep="-"))
+  
+      interval_bayes <- bayesint(QTL.mr, c, 0.95, lodcolumn=n, expandtomarkers=TRUE)
+      int_mk2 <- append(int_mk2, paste(rownames(interval_bayes)[1],rownames(interval_bayes)[3], sep="-"))
+      int_pos2 <- append(int_pos2, paste(interval_bayes\$pos[1],interval_bayes\$pos[3],sep="-"))
+
+   }
+
    if (length (chr) < 1){
       next
    }else if(length (chr) == 1){
@@ -113,7 +131,7 @@ for (i in seq(4,length(QTL.mr.test),by=3)){
       fitvar <- fit\$result.drop[(length(chr)*3+1):(length(chr)*3+length(chr))]
       fitpval <- fit\$result.drop[(length(chr)*5+1):(length(chr)*5+length(chr))]
    }
-   fitsum <- cbind(chr,pos,fitlod,fitvar,fitpval,fitest,fitse)
+   fitsum <- cbind(chr,pos,int_pos1,int_mk1,int_pos2,int_mk2,fitlod,fitvar,fitpval,fitest,fitse)
    print (fitsum)
    write.table(fitsum,"$opt{project}.QTL.fit.summary",append=TRUE,row.names=FALSE, col.names=TRUE,sep="\t") 
 }

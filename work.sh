@@ -70,9 +70,27 @@ qsub -q js step03.QTL.sh
 
 
 echo "Use bam files from Sofia directly"
+cd inf_script
+python BamStat.py --input ../../input/fastq/RILs_ALL_bam
+#link new bam file to RIL_ALL_bam
+
 qsub step01.parent.sh
 bash step01.bam2snp.sh
-qsub step01.genotype.sh
+qsub -q js step01.genotype.sh
 qsub -q js step02.recombination_bin.sh
-qsub step03.QTL.sh
+qsub -q js step03.QTL.sh
+
+#check the qaulity of library and genotype
+python inf_scripts/NeedCare.py > NeedCare.bam.inf
+#
+sed 's/"//g' MPR.cross.uniq.QTL.fit.summary > MPR.cross.uniq.QTL.fit.summary.clean
+
+
+echo "Core population run"
+cd inf_script
+python BamDir.py --input ../inf_list/Bam.Core.list --project RILs_ALL_bam_core
+qsub step01.parent.sh
+qsub -q js step01.genotype.sh
+qsub -q js step02.recombination_bin.sh
+qsub -q js step03.QTL.sh
 

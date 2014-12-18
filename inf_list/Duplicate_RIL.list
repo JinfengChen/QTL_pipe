@@ -1,0 +1,20 @@
+GN115/GN116	-	TraitDiff	Keep GN116 which is same with pcr result. Same. GN115 also wrong in lulu's list.
+GN5/GN6	FC153	TraitClose	Same. Keep both or just keep one, both are same with pcr result.
+GN169/GN218	-	TraitDiff	Keep none, both are diff from pcr. GN218 is pure and GN169 has one more recombiantion on chr07 diff from GN218. GN169 also have some heterzygous or contamination
+GN231/GN232	-	TraitDiff	Keep GN231, GN231 is same with pcr. Same
+GN135/GN223	FC251	TraitDiff	Keep GN223, GN223 is same with pcr. Both showed some comtamination or heterozygous
+GN208/GN230	-	TraitDiff	Keep GN230, GN230 is same with pcr. Almost the Same
+GN127/GN157	-	TraitDiff	Keep GN157, GN157 is same with pcr. Same. GN127 also wrong in lulu's list
+?GN180/GN181	-	TraitClose	Keep both, both are same with pcr, GN180 may not. Almost the Same, GN180 has one site of heterozygous.
+GN58/GN61	-	TraitDiff	Keep both, both are same with pcr. Same
+?GN243/GN278	-	TraitClose	Keep GN243, GN243 is same with pcr. Different RILs with two recombination differences between them.
+GN162/GN253	-	TraitDiff	Keep GN253, GN253 is same with pcr. Same
+GN70/GN72	-	TraitDiff	Keep GN72, GN72 is the same with pcr. Same. GN70 also wrong in lulu's list
+GN240/GN3	-	TraitDiff	Keep G3, GN3 is the same with pcr. Very similar. GN240 has some heterozygous or contamination. GN240 also wrong in lulu's list.
+GN194/GN199	-	TraitDiff	Keep GN199, GN199 is the same with pcr. Same
+GN100/GN190	FC251	TraitDiff	Keep 100, GN190 has many site of contamination or heterozygous, not sure. GN190 is similar to GN100 and with contamination of GN100
+GN54/GN55	-	TraitDiff	Keep both, both are same with pcr, GN55 show only one ping difference at chr9 13MB. Same
+GN37/GN280	-	TraitDiff	Kepp both, both are same with pcr. Same
+?GN152/GN145	-	TraitClose	Keep both, both are same with pcr. Different RILs but related because most chromosomes have same genotype
+GN250/GN228/GN209	-	TraitDiff	GN228 and GN250 are same, GN250 with one site of heterozygous, GN209 similar to these two but with few contamination.	
+
