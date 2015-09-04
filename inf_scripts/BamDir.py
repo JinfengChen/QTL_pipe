@@ -76,9 +76,9 @@ def main():
         print >> ofile, ril
         #print cmd1
         #print cmd2
-        os.system(cmd1)
-        os.system(cmd2)
-        os.system(cmd3)
+        #os.system(cmd1)
+        #os.system(cmd2)
+        #os.system(cmd3)
         count += 1
     print 'Job done: Linked %s' %(count) 
  

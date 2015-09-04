@@ -48,7 +48,7 @@ foreach my $rils (sort keys %$refgeno){
    #next;
    #next unless ($rils=~/GN15\d{1}$/ or $rils=~/MZ00.*/);
    #next unless ($rils=~/GN131/ or $rils=~/GN80/ or $rils=~/GN83/);
-   next unless ($rils=~/GN242/);
+   next unless ($rils=~/GN43/);
    my $svg=SVG->new(width=>$width,height=>$height);
    my $xstart=100; my $ystart=0; my $count=0; 
    foreach my $chr0 (sort { $a <=> $b } keys %{$refgeno->{$rils}}){
@@ -72,17 +72,19 @@ foreach my $rils (sort keys %$refgeno){
    `mv $opt{project}.Recombination.Bin.$rils.* $opt{MPR}/MPR_bin`;
 }
 
+if (0){
+print "Draw chromosome bin:";
 #draw chr bin
-#my $refgeno2=readgeno2("$opt{MPR}/MPR.geno.data");
-#my $refbin2=readbin2("$opt{MPR}/MPR.geno.bin");
-#my $refbinfill2 =readbin2("$opt{MPR}/MPR.geno.bin.fill");
-#my $refbinuniq2 =readbin2("$opt{MPR}/MPR.geno.bin.uniq");
+my $refgeno2=readgeno2("$opt{MPR}/MPR.geno.data");
+my $refbin2=readbin2("$opt{MPR}/MPR.geno.bin");
+my $refbinfill2 =readbin2("$opt{MPR}/MPR.geno.bin.fill");
+my $refbinuniq2 =readbin2("$opt{MPR}/MPR.geno.bin.uniq");
 
-#drawchrbin($refbin2,$chrlen,$bp_per_pix,"original");
-#drawchrbin($refbinfill2,$chrlen,$bp_per_pix,"fill");
-#drawchrbin($refbinuniq2,$chrlen,$bp_per_pix,"uniq");
-#drawchrSNP($refgeno2,$refparents,$chrlen,$bp_per_pix,"geno");
-
+drawchrbin($refbin2,$chrlen,$bp_per_pix,"original");
+drawchrbin($refbinfill2,$chrlen,$bp_per_pix,"fill");
+drawchrbin($refbinuniq2,$chrlen,$bp_per_pix,"uniq");
+drawchrSNP($refgeno2,$refparents,$chrlen,$bp_per_pix,"geno");
+}
 
 ###
 sub drawtitle
