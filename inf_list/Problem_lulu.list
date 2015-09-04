@@ -1,18 +1,76 @@
-RIL70
-RIL88
-RIL90
-RIL95
-RIL103
-RIL115
-RIL124
-RIL127 
-RIL132
-RIL168
-RIL169
-RIL187
-RIL206
-RIL211
-RIL220
-RIL221
-RIL240
-RIL272
+#sed 's/\_seq//g' Problem_lulu.list | sed 's/\_pcr//g' | cut -f1 | uniq
+#mPing	1	2	3	4	5	6	7	8
+RIL55_seq	1	1	1	1	0	0	1	1
+RIL55_pcr	1	1	1	1	0	1	1	1
+RIL70_seq	1	1	1	0	1	1	1	0
+RIL70_pcr	0	1	1	1	0	0	0	1
+RIL88_seq	1	1	0	1	1	0	0	1
+RIL88_pcr	0	1	1	1	1	1	0	1
+RIL90_seq	0	0	0	0	1	1	1	1
+RIL90_pcr	0	0	1	1	1	1	0	1
+RIL95_seq	1	1	0	0	0	1	1	1
+RIL95_pcr	0	1	1	1	1	1	0	1
+RIL97_seq	1	1	0	0	0	0	1	0
+RIL97_pcr	0	0	0	1	0	0	0	0
+RIL103_seq	1	1	1	1	1	1	1	1
+RIL103_pcr	0	1	1	0	1	0	0	1
+RIL115_seq	0	0	1	1	0	0	0	1
+RIL115_pcr	0	1	0	1	0	0	1	0
+RIL124_seq	1	1	0	0	0	0	0	1
+RIL124_pcr	1	1	0	0	1	1	1	1
+RIL127_seq	0	0	1	0	0	1	1	1
+RIL127_pcr	0	1	1	1	0	0	1	0
+RIL132_seq	1	1	1	0	1	1	1	0
+RIL132_pcr	0	0	1	1	0	1	0	0
+RIL135_seq	0	0	1	1	1	1	1	1
+RIL135_pcr	1	1	1	0	1	1	1	0
+RIL152_seq	1	1	0	0	1	0	0	1
+RIL152_pcr	0	1	0	0	1	0	0	1
+RIL162_seq	1	1	1	0	1	0	0	1
+RIL162_pcr	0	0	0	0	1	1	1	0
+RIL168_seq	0	1	1	0	0	0	0	1
+RIL168_pcr	0	0	1	0	0	0	1	1
+RIL169_seq	1	1	1	1	1	0	1	1
+RIL169_pcr	1	0	1	1	0	0	0	1
+RIL187_seq	0	0	1	0	0	0	1	1
+RIL187_pcr	0	1	1	0	0	0	0	1
+RIL190_seq	0	0	0	1	0	0	0	0
+RIL190_pcr	1	1	0	1	0	0	0	1
+RIL194_seq	0	0	0	0	1	0	1	0
+RIL194_pcr	1	0	1	1	1	1	1	0
+RIL206_seq	1	1	0	0	1	1	1	0
+RIL206_pcr	0	0	1	0	0	1	0	0
+RIL208_seq	0	0	1	1	0	0	0	0
+RIL208_pcr	0	1	0	1	0	0	0	1
+RIL209_seq	1	1	0	0	1	1	0	0
+RIL209_pcr	1	1	0	0	1	1	1	0
+RIL211_seq	0	0	1	0	0	1	0	0
+RIL211_pcr	1	1	0	1	0	0	0	1
+RIL216_seq	1	1	1	0	1	1	0	0
+RIL216_pcr	1	1	1	1	0	0	1	1
+RIL218_seq	1	1	1	0	1	0	1	1
+RIL218_pcr	1	1	1	0	0	0	0	1
+RIL219_seq	1	1	1	0	0	0	0	1
+RIL219_pcr	1	1	0	0	1	1	0	0
+RIL220_seq	1	1	1	0	1	0	1	0
+RIL220_pcr	0	1	1	1	1	0	0	1
+RIL221_seq	1	1	0	0	0	0	0	1
+RIL221_pcr	1	1	0	0	1	1	1	1
+RIL228_seq	1	1	0	0	1	1	0	0
+RIL228_pcr	0	1	0	1	1	1	0	1
+RIL232_seq	0	0	0	0	0	0	0	1
+RIL232_pcr	1	1	0	0	1	1	0	0
+RIL240_seq	1	1	1	0	1	1	1	0
+RIL240_pcr	0	0	1	1	0	1	0	0
+RIL250_seq	1	1	0	0	1	1	0	0
+RIL250_pcr	1	1	1	1	0	0	1	1
+RIL272_seq	1	1	1	0	1	0	1	1
+RIL272_pcr	1	1	0	4	1	0	0	1
+RIL273_seq	1	1	1	1	0	0	1	1
+RIL273_pcr	1	1	0	0	1	1	0	0
+RIL278_seq	1	1	1	0	1	0	0	1
+RIL278_pcr	1	1	1	0	0	1	1	1
+RIL279_seq	0	0	0	0	1	0	0	1
+RIL279_pcr	1	1	1	0	0	0	1	1
+RIL280_seq	1	1	0	0	0	0	0	1
+RIL280_pcr	1	1	1	0	0	0	1	1
