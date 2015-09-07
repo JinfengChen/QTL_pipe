@@ -1,0 +1,10 @@
+Traceback (most recent call last):
+  File "SNP_similarity.py", line 138, in <module>
+    main()
+  File "SNP_similarity.py", line 134, in main
+    print '%s\t%s\t%s\t%s\t%s' %(result[0], result[1], result[2], result[3], result[4])
+IndexError: list index out of range
+Start: 1441471571
+End: 1441471806
+Run time: 235
+Done

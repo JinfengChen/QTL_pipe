@@ -94,3 +94,10 @@ qsub -q js step01.genotype.sh
 qsub -q js step02.recombination_bin.sh
 qsub -q js step03.QTL.sh
 
+
+echo "multi library SNP and similarity"
+cd inf_script
+python MultiLib_bam.py --input ../../input/fastq/RILs_ALL_bam
+cd ..
+perl scripts/genotype/RIL_SNP_BWA_pileup.pl --ref /rhome/cjinfeng/BigData/00.RD/seqlib/MSU7_samtools0_1_16/MSU_r7.fa --parent /rhome/cjinfeng/BigData/00.RD/RILs/QTL_pipe/bin/NB.RILs.dbSNP.SNPs.parents --fastq /rhome/cjinfeng/BigData/00.RD/RILs/QTL_pipe/input/fastq/RILs_ALL_bam_multi_lib > log 2>&1 &
+

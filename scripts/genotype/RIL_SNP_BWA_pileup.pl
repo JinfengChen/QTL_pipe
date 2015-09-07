@@ -48,7 +48,8 @@ for(my $i=0; $i< @$map; $i++){
 }# for loop
 close LIST;
 #`perl /rhome/cjinfeng/software/bin/qsub-pbs.pl --convert no --maxjob 10 --resource nodes=1:ppn=1,mem=5G,walltime=100:00:00 pileup.sh`;
-`perl /rhome/cjinfeng/software/bin/qsub-pbs.pl --convert no --lines 3 --maxjob 20 --queue js --resource walltime=100:00:00 pileup.sh`;
+`perl /rhome/cjinfeng/BigData/software/bin/qsub-pbs.pl --convert no --lines 3 --maxjob 20 --resource nodes=1:ppn=1,mem=5G,walltime=100:00:00 pileup.sh`;
+
 }# end of sub function
 
 
