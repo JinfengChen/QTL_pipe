@@ -1,6 +1,6 @@
 #!/usr/bin/perl
 use Getopt::Long;
-use lib "/rhome/cjinfeng/software/lib";
+use lib "/rhome/cjinfeng/BigData/software/lib";
 use SVG;
 use FontSize;
 #use warnings;
@@ -48,7 +48,7 @@ foreach my $rils (sort keys %$refgeno){
    #next;
    #next unless ($rils=~/GN15\d{1}$/ or $rils=~/MZ00.*/);
    #next unless ($rils=~/GN131/ or $rils=~/GN80/ or $rils=~/GN83/);
-   next unless ($rils=~/GN43/);
+   #next unless ($rils=~/GN43/);
    my $svg=SVG->new(width=>$width,height=>$height);
    my $xstart=100; my $ystart=0; my $count=0; 
    foreach my $chr0 (sort { $a <=> $b } keys %{$refgeno->{$rils}}){
@@ -615,6 +615,6 @@ my ($svg,$name)=@_;
 open OUT,">$name\.svg";
 print OUT $svg->xmlify;
 close OUT;
-system("/rhome/cjinfeng/software/tools/draw/svg2xxx_release/svg2xxx -t pdf -m 10000 $name.svg > step02.recombination_bin.sh.svg.draw 2> step02.recombination_bin.sh.svg.draw2");
+system("/rhome/cjinfeng/BigData/software/draw/svg2xxx_release/svg2xxx -t pdf -m 10000 $name.svg > step02.recombination_bin.sh.svg.draw 2> step02.recombination_bin.sh.svg.draw2");
 }
  

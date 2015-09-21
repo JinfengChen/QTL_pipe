@@ -99,5 +99,19 @@ echo "multi library SNP and similarity"
 cd inf_script
 python MultiLib_bam.py --input ../../input/fastq/RILs_ALL_bam
 cd ..
+qsub step01.parent.sh
 perl scripts/genotype/RIL_SNP_BWA_pileup.pl --ref /rhome/cjinfeng/BigData/00.RD/seqlib/MSU7_samtools0_1_16/MSU_r7.fa --parent /rhome/cjinfeng/BigData/00.RD/RILs/QTL_pipe/bin/NB.RILs.dbSNP.SNPs.parents --fastq /rhome/cjinfeng/BigData/00.RD/RILs/QTL_pipe/input/fastq/RILs_ALL_bam_multi_lib > log 2>&1 &
+perl scripts/trait/subtrait.pl --trait ../input/trait/May28_2013.RIL.trait.table.QTL.trait.txt.ALL --maqlist BWA.sampleRIL.list > ../input/trait/May28_2013.RIL.trait.table.QTL.trait.txt.first
+perl scripts/genotype/RIL_SNP_BWA.pl --fastq ../input/fastq/RILs_ALL_bam_multi_lib --parents NB.RILs.dbSNP.SNPs.parents
+qsub step02.recombination_bin.sh
+
+echo "correction problem RILs"
+cd inf_script
+python Correction_bam.py
+cd ..
+qsub step01.parent.sh
+perl scripts/genotype/RIL_SNP_BWA_pileup.pl --ref /rhome/cjinfeng/BigData/00.RD/seqlib/MSU7_samtools0_1_16/MSU_r7.fa --parent /rhome/cjinfeng/BigData/00.RD/RILs/QTL_pipe/bin/NB.RILs.dbSNP.SNPs.parents --fastq /rhome/cjinfeng/BigData/00.RD/RILs/QTL_pipe/input/fastq/RILs_ALL_bam_correction > log 2>&1 &
+perl scripts/trait/subtrait.pl --trait ../input/trait/May28_2013.RIL.trait.table.QTL.trait.txt.ALL --maqlist BWA.sampleRIL.list > ../input/trait/May28_2013.RIL.trait.table.QTL.trait.txt.first
+perl scripts/genotype/RIL_SNP_BWA.pl --fastq ../input/fastq/RILs_ALL_bam_correction --parents NB.RILs.dbSNP.SNPs.parents
+
 

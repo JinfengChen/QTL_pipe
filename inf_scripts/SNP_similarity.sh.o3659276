@@ -1,0 +1,10 @@
+Traceback (most recent call last):
+  File "SNP_similarity.py", line 143, in <module>
+    main()
+  File "SNP_similarity.py", line 139, in main
+    print '%s\t%s\t%s\t%s\t%s\t%s\t' %(result[0], result[1], result[2], result[3], result[4], result[5], result[6])
+TypeError: not all arguments converted during string formatting
+Start: 1442617716
+End: 1442617785
+Run time: 69
+Done

@@ -24,8 +24,12 @@ qsub -q highmem SNP_similarity.sh
 awk '$1~/RIL58_/ && $2~/RIL58_/' RILs_SNP.dupli_all.similarity
 #all dupli
 awk '$3>0.9' RILs_SNP.dupli_all.similarity |grep "NA" -v| less -S
+awk '$3>0.9' RILs_SNP.dupli_all_number.similarity | grep "NA" -v > RILs_SNP.dupli_all_number.duplicate.table
 #all
 awk '$3>0.9' RILs_SNP.similarity | grep "NA" -v | awk '$1!=$2' | less -S
+awk '$3>0.9' RILs_SNP.all_all_number.similarity | grep "NA" -v | awk '$1!=$2' > RILs_SNP.all_all_number.duplicate.table
+#dupli vs dupli, no duplicate
+awk '$3>0.9' RILs_SNP.dupli_dupli_number.similarity |grep "NA" -v | awk '$1!=$2' | less -S
 
     '''
     print message
@@ -78,15 +82,15 @@ def snp_similarity(lib1, lib2, snp1, snp2):
     snp2_dict = read_snp(snp2)
     total = 0
     match = 0
-    if len(snp1_dict.keys()) < 20000 or len(snp2_dict.keys()) < 20000:
-        return [lib1, lib2, 'NA', 0, 0]
+    if len(snp1_dict.keys()) < 2000 or len(snp2_dict.keys()) < 2000:
+        return [lib1, lib2, 'NA', 0, 0, len(snp1_dict.keys()), len(snp2_dict.keys())]
     for pos in snp1_dict.keys():
         if snp2_dict.has_key(pos):
             total += 1
             if snp1_dict[pos] == snp2_dict[pos]:
                 match += 1
     sim = float(match)/float(total)
-    return [lib1, lib2, sim, total, match]
+    return [lib1, lib2, sim, total, match, len(snp1_dict.keys()), len(snp2_dict.keys())]
 
 def function_helper(args):
     return snp_similarity(*args)
@@ -114,13 +118,13 @@ def main():
         args.cpu = 2
 
     #/rhome/cjinfeng/BigData/00.RD/RILs/QTL_pipe/input/fastq/RILs_ALL_bam_multi_lib
-    bam_all   = subprocess.check_output('ls -all %s/*.bam' %('/rhome/cjinfeng/BigData/00.RD/RILs/QTL_pipe/input/fastq/RILs_ALL_bam'), shell=True)
-    bam_dupli = subprocess.check_output('ls -all %s/*.bam' %('/rhome/cjinfeng/BigData/00.RD/RILs/QTL_pipe/input/fastq/RILs_ALL_bam'), shell=True)
+    bam_all   = subprocess.check_output('ls -all %s/*.bam' %('/rhome/cjinfeng/BigData/00.RD/RILs/QTL_pipe/input/fastq/RILs_ALL_bam_multi_lib'), shell=True)
+    bam_dupli = subprocess.check_output('ls -all %s/*.bam' %('/rhome/cjinfeng/BigData/00.RD/RILs/QTL_pipe/input/fastq/RILs_ALL_bam_correction'), shell=True)
 
     snp_dupli = parse_bam_all(bam_dupli) 
     snp_all   = parse_bam_all(bam_all)
 
-    print 'Lib1\tLib2\tSimilarity'
+    print 'Lib1\tLib2\tSimilarity\tTotal_Shared_SNP_Site\tTotal_Identical_SNP_Sites\tLib1_SNP\tLib2_SNP'
     parameters = []
     for lib_d in sorted(snp_dupli.keys()):
         snp_d = snp_dupli[lib_d]
@@ -132,7 +136,7 @@ def main():
             #print '%s\t%s\t%s' %(lib_d, lib_a, snp_sim)
     collect_list_list = mp_pool_function(function_helper, parameters, args.cpu)
     for result in collect_list_list:
-        print '%s\t%s\t%s\t%s\t%s' %(result[0], result[1], result[2], result[3], result[4])
+        print '%s\t%s\t%s\t%s\t%s\t%s\t%s' %(result[0], result[1], result[2], result[3], result[4], result[5], result[6])
 
 
 if __name__ == '__main__':

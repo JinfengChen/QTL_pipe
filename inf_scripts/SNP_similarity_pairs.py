@@ -72,7 +72,7 @@ def snp_similarity_list(lib1, lib2, snp1, snp2, outfile):
     snp2_dict = read_snp(snp2)
     total = 0
     match = 0
-    if len(snp1_dict.keys()) < 20000 or len(snp2_dict.keys()) < 20000:
+    if len(snp1_dict.keys()) < 2000 or len(snp2_dict.keys()) < 2000:
         return [lib1, lib2, 'NA', 0, 0]
     ofile = open(outfile, 'w')
     print >> ofile, 'Pos\tSNP1\tGenotype1\tSNP2\tGenotype2'
