@@ -11,7 +11,7 @@ sys.path.append('/rhome/cjinfeng/BigData/software/ProgramPython/lib')
 from utility import gff_parser, createdir
 import subprocess
 import multiprocessing as mp
-
+import gzip
 
 def usage():
     test="name"
@@ -57,7 +57,7 @@ def read_snp(infile):
 #Chr1    31071   A       A/A
 def read_snp_tab(infile):
     data = defaultdict(lambda : str())
-    with open (infile, 'r') as filehd:
+    with gzip.open (infile, 'r') as filehd:
         for line in filehd:
             line = line.rstrip()
             if len(line) > 2 and not line.startswith(r'#'): 
@@ -153,7 +153,7 @@ def main():
     #snp_all   = parse_bam_all(bam_all)
 
     #Bam_fixID/RIL100_0_ATCACG_FC251L2.genotype.tab
-    snp_files = glob.glob('%s/*.genotype.tab' %(args.input))
+    snp_files = glob.glob('%s/*.genotype.tab.gz' %(args.input))
     snp_dict  = lib_snp_file(snp_files)
 
     print 'Lib1\tLib2\tSimilarity\tTotal_Shared_SNP_Site\tTotal_Identical_SNP_Sites\tLib1_SNP\tLib2_SNP'

@@ -1,0 +1,1 @@
+/opt/linux/centos/7.x/x86_64/pkgs/fastqc/0.11.3/fastqc -a /rhome/cjinfeng/BigData/00.RD/RILs/QTL_pipe/bin/inf_scripts/adapter.list -o /bigdata/stajichlab/cjinfeng/00.RD/RILs/QTL_pipe/input/fastq/Illumina_correct/RIL100_0 -f fastq /bigdata/stajichlab/cjinfeng/00.RD/RILs/QTL_pipe/input/fastq/Illumina_correct/RIL100_0/RIL100_0_TGACCA_FC0813L3_p1.fq

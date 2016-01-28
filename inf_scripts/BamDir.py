@@ -70,15 +70,21 @@ def main():
         if rils.has_key(ril):
             continue
         snp = '%s.Maq.p1.map.pileup.SNP' %(prefix)
+        stat = '%s.bam.flagstat' %(prefix)
+        bai  = '%s.bam.bai' %(prefix)
         cmd1 = 'ln -s %s %s' %(bam, newdir)
         cmd2 = 'ln -s %s %s' %(snp, newdir)
-        cmd3 = 'cp %s %s/Exclued.list' %(args.input, newdir)
+        cmd3 = 'ln -s %s %s' %(stat, newdir)
+        cmd4 = 'ln -s %s %s' %(bai, newdir)
+        cmd5 = 'cp %s %s/Exclued.list' %(args.input, newdir)
         print >> ofile, ril
         #print cmd1
         #print cmd2
         #os.system(cmd1)
         #os.system(cmd2)
-        #os.system(cmd3)
+        os.system(cmd3)
+        os.system(cmd4)
+        #os.system(cmd5)
         count += 1
     print 'Job done: Linked %s' %(count) 
  

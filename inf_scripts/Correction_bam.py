@@ -97,7 +97,7 @@ def main():
         bai = re.sub(r'.bam', r'.bai', bam)
         flagstat = re.sub(r'.recal.bam', r'.dedup.flagstat', bam)
         bam_new = '%s/%s.bam' %(target, ril)
-        bai_new = '%s/%s.bai' %(target, ril)
+        bai_new = '%s/%s.bam.bai' %(target, ril)
         flagstat_new = '%s/%s.flagstat' %(target, ril)
         #print bam
         #print bam_new

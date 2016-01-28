@@ -14,7 +14,7 @@ from utility import gff_parser, createdir
 def usage():
     test="name"
     message='''
-python Fix_Bam_ID_multi_lib.py
+python Fix_Bam_ID_multi_lib.py > Bam_fixID.info
 This script deal with issue 2. First, we produce a detailed table of all the libraries for all the RILs. Second, for these RILs have two libraries, we keep newest one if they are different. we keep both if they are same. Third, For these have three or more libraries we create table and correction by manual inspection. 
 
 Fix Bam ID by the following ways:
@@ -30,6 +30,40 @@ def fasta_id(fastafile):
     for record in SeqIO.parse(fastafile,"fasta"):
         fastaid[record.id] = 1
     return fastaid
+
+#Sample  #Read   Average Total   Depth   Mapped_Depth    Mapped_rate     #Library        FileName
+#RIL1    23383054        100     2338305400      6.2857672043    6.13189677419   0.975520819479  1       Bam_fixID/RIL1_0_CGTACG_FC153L5.recal.bam
+def read_depth(infile):
+    data = defaultdict(str)
+    with open (infile, 'r') as filehd:
+        for line in filehd:
+            line = line.rstrip()
+            if len(line) > 2 and line.startswith(r'RIL'): 
+                unit = re.split(r'\t',line)
+                lib  = re.split(r'\.', os.path.split(unit[-1])[1])[0]
+                data[lib] = '%0.2f' %(float(unit[5]))
+    return data
+
+
+#Lib1    Lib2    Similarity      Total_Shared_SNP_Site   Total_Identical_SNP_Sites       Lib1_SNP        Lib2_SNP
+#RIL100_0_ATCACG_FC251L2 RIL100_0_TGACCA_FC0813L3        NA      0       0       51      76693
+#RIL100_0_ATCACG_FC251L2 RIL102_0_ATGTCA_FC197L6 NA      0       0       51      105418
+def read_similarity(infile):
+    data1 = defaultdict(lambda : str())
+    data2 = defaultdict(lambda : defaultdict(lambda : str()))
+    with open (infile, 'r') as filehd:
+        for line in filehd:
+            line = line.rstrip()
+            if len(line) > 2 and line.startswith(r'RIL'): 
+                unit = re.split(r'\t',line)
+                compare = sorted([unit[0], unit[1]])
+                data1[':'.join(compare)] = unit[2] if unit[2] == 'NA' else '%0.2f' %(float(unit[2]))
+                if not unit[2] == 'NA':
+                    if float(unit[2]) > 0.9:
+                        data2[unit[0]][unit[1]] = unit[2] if unit[2] == 'NA' else '%0.2f' %(float(unit[2]))
+    return data1, data2
+
+
 
 
 def readtable(infile):
@@ -94,7 +128,7 @@ def flowcell_date():
     return flowcell
 
 #Bam_fixID/RIL100_0_ATCACG_FC251L2.recal.bam 
-def multi_lib(work_dir):
+def multi_lib(work_dir, lib_depth, lib_dupli_pair, lib_dupli_single):
     data = defaultdict(lambda : defaultdict(lambda : str()))
     bams = glob.glob('%s/*.recal.bam' %(work_dir))
     #create dict of RIL->lib->flowcell
@@ -106,11 +140,18 @@ def multi_lib(work_dir):
         #print lib, ril, flowcell 
     #rank the lib for each RIL by sequenced date of flowcell
     fc_date = flowcell_date()
-    print 'RIL\tLib:Date'
+    print 'RIL\tLib:Date:Depth'
     for ril in sorted(data.keys(), key=int):
         if len(data[ril].keys()) == 1:
             lib = data[ril].keys()[0]
-            print 'RIL%s\t%s:%s' %(ril, lib, fc_date[data[ril][lib]])
+            #lib have similar library with other rils
+            similar = 'NA'
+            if lib_dupli_single.has_key(lib):
+                dupli = []
+                for lib1 in sorted(lib_dupli_single[lib].keys()):
+                    dupli.append('%s:%s:%s' %(lib, lib1, lib_dupli_single[lib][lib1]))
+                similar = '\t'.join(dupli)
+            print 'RIL%s\t%s:%s:%s\t\t\t\t%s' %(ril, lib, fc_date[data[ril][lib]], lib_depth[lib],similar)
         elif len(data[ril].keys()) > 1:
             lib_dict = defaultdict(lambda : str())
             for lib in data[ril].keys():
@@ -119,10 +160,33 @@ def multi_lib(work_dir):
             #sort and output
             lib_dict_sorted = OrderedDict(sorted(lib_dict.items(), key=lambda x: x[1], reverse=True))
             ril_info = []
-            for lib in lib_dict_sorted:
-                lib_info = '%s:%s' %(lib, lib_dict_sorted[lib])
+            for lib in lib_dict_sorted.keys():
+                lib_info = '%s:%s:%s' %(lib, lib_dict_sorted[lib], lib_depth[lib])
                 ril_info.append(lib_info)
-            print 'RIL%s\t%s' %(ril, '\t'.join(ril_info))
+            #fill list to 4 culumn
+            ril_info.extend(['']*(4-len(ril_info)))
+
+            #similar between lib for one ril
+            similar = defaultdict(lambda : str())
+            similar_list = []
+            for lib in lib_dict_sorted.keys():
+                for lib1 in lib_dict_sorted.keys():
+                    pair = ':'.join(sorted([lib, lib1]))
+                    if not lib == lib1 and not similar.has_key(pair):
+                        similar[pair] = lib_dupli_pair[pair]
+                        similar_list.append('%s:%s' %(pair, lib_dupli_pair[pair]))
+            #lib similar with other library
+            similar_lib = ''
+            for lib in lib_dict_sorted.keys():
+                if lib_dupli_single.has_key(lib):
+                    dupli = []
+                    for lib1 in sorted(lib_dupli_single[lib].keys()):
+                        #exclude these from same ril
+                        pair = ':'.join(sorted([lib, lib1]))
+                        if not similar.has_key(pair):
+                            dupli.append('%s:%s:%s' %(lib, lib1, lib_dupli_single[lib][lib1]))
+                    similar_lib = '\t'.join(dupli)
+            print 'RIL%s\t%s\t%s\t%s' %(ril, '\t'.join(ril_info), '\t'.join(similar_list), similar_lib)
        
 def main():
     parser = argparse.ArgumentParser()
@@ -139,7 +203,9 @@ def main():
     #fix_fc251(work_dir, fc251_fixed) 
 
     #For these libraries with multi libraries we collection information (flowcell, depth, data) and picked the newest one as representive libraries.
-    multi_lib(work_dir)
+    lib_depth = read_depth('Bam_fixID.bam.stat')
+    lib_dupli_pair, lib_dupli_single = read_similarity('Bam_fixID.SNP.similarity')
+    multi_lib(work_dir, lib_depth, lib_dupli_pair, lib_dupli_single)
 
 if __name__ == '__main__':
     main()

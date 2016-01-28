@@ -33,7 +33,7 @@ my $flag= $type eq "qtlcart" ? 1 : 0;
 my $cmd =<<R;
 library(qtl)
 pdf ("$opt{project}.QTL.pdf")
-nph <- 18 ## number of phenotype
+nph <- 24 ## number of phenotype
 ## step0. read and write the data of cross
 if ($flag){
    read.cross("qtlcart",dir="./",file="$qtl.cro",mapfile="$qtl.map") -> $cross
@@ -203,7 +203,7 @@ R
 open OUT, ">$opt{project}.R" or die "$!";
      print OUT "$cmd\n";
 close OUT;
-`cat $opt{project}.R | /rhome/cjinfeng/software/tools/R-2.15.3/bin/R --vanilla --slave`;
+`cat $opt{project}.R | /opt/linux/centos/7.x/x86_64/pkgs/R/3.2.0/bin/R --vanilla --slave`;
 
 }
  

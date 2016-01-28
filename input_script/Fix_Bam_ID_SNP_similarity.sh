@@ -1,6 +1,6 @@
 #!/bin/bash
 #PBS -l nodes=1:ppn=32
-#PBS -l mem=60gb
+#PBS -l mem=100gb
 #PBS -l walltime=100:00:00
 #PBS -j oe
 #PBS -V
@@ -11,7 +11,8 @@
 
 start=`date +%s`
 
-python Fix_Bam_ID_SNP_similarity.py --input Bam_fixID --cpu 32 > Bam_fixID.SNP.similarity
+bam_dir=Bam_correct
+python Fix_Bam_ID_SNP_similarity.py --input $bam_dir --cpu $PBS_NP > $bam_dir\.SNP.similarity
 
 end=`date +%s`
 runtime=$((end-start))

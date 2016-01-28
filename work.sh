@@ -113,5 +113,46 @@ qsub step01.parent.sh
 perl scripts/genotype/RIL_SNP_BWA_pileup.pl --ref /rhome/cjinfeng/BigData/00.RD/seqlib/MSU7_samtools0_1_16/MSU_r7.fa --parent /rhome/cjinfeng/BigData/00.RD/RILs/QTL_pipe/bin/NB.RILs.dbSNP.SNPs.parents --fastq /rhome/cjinfeng/BigData/00.RD/RILs/QTL_pipe/input/fastq/RILs_ALL_bam_correction > log 2>&1 &
 perl scripts/trait/subtrait.pl --trait ../input/trait/May28_2013.RIL.trait.table.QTL.trait.txt.ALL --maqlist BWA.sampleRIL.list > ../input/trait/May28_2013.RIL.trait.table.QTL.trait.txt.first
 perl scripts/genotype/RIL_SNP_BWA.pl --fastq ../input/fastq/RILs_ALL_bam_correction --parents NB.RILs.dbSNP.SNPs.parents
+qsub step02.recombination_bin.sh
 
+echo "fix_ID bam"
+#fix ID in ../input/fastq
+qsub step01.parent.sh
+perl scripts/genotype/RIL_SNP_BWA_pileup.pl --ref /rhome/cjinfeng/BigData/00.RD/seqlib/MSU7_samtools0_1_16/MSU_r7.fa --parent /rhome/cjinfeng/BigData/00.RD/RILs/QTL_pipe/bin/NB.RILs.dbSNP.SNPs.parents --fastq /rhome/cjinfeng/BigData/00.RD/RILs/QTL_pipe/input/fastq/RILs_ALL_bam_fixID > log 2>&1 &
+perl scripts/trait/subtrait.pl --trait ../input/trait/May28_2013.RIL.trait.table.QTL.trait.txt.ALL --maqlist BWA.sampleRIL.list > ../input/trait/May28_2013.RIL.trait.table.QTL.trait.txt.first
+perl scripts/genotype/RIL_SNP_BWA.pl --fastq ../input/fastq/RILs_ALL_bam_fixID --parents NB.RILs.dbSNP.SNPs.parents
+qsub step02.recombination_bin.sh
+
+
+echo "correct, after each update, run these scripts"
+#similarity check for duplicates
+cd ../input/fastq
+qsub Fix_Bam_ID_SNP_similarity.sh
+#summary bam statistic
+cd ../input/fastq
+python Fix_Bam_ID_Bam_Stat.py --input Bam_correct
+#link unique bam file into QTL_pile input
+cd ../bin/inf_script
+python BamDir_correct.py --project RILs_ALL_bam_correct
+#summary mapping depth statistic 
+cd ../bin/inf_script
+python Run_Qualimap.py --bam ../../input/fastq/RILs_ALL_bam_correct/
+python Sum_Qualimap.py --bam ../../input/fastq/RILs_ALL_bam_correct > RILs_ALL_bam_correct.summary
+#genotype.tab to .SNP
+cd ../input/fastq
+python Fix_Bam_ID_tab2SNP.py --input RILs_ALL_bam_correct
+#prepare for RelocaTE run
+cd ../input/fastq
+python PrepareRelocaTE.py --bam RILs_ALL_bam_correct
+
+#add seed dimension trait
+cd script/trait
+perl AddmPingTrait_SeedDimension.pl
+cd -
+#run QTL_pipe
+cut -f1 ../input/fastq/RILs_ALL_bam_correct.RILs.list > BWA.sampleRIL.list
+qsub step01.parent.sh
+qsub -q highmem step01.genotype.sh
+qsub -q highmem step02.recombination_bin.sh
+qsub -q highmem step03.QTL.sh
 

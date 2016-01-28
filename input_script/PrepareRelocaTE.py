@@ -11,7 +11,7 @@ import glob
 def usage():
     test="name"
     message='''
-python PrepareRelocaTE.py --bam RILs_ALL_bam
+python PrepareRelocaTE.py --bam RILs_ALL_bam_correct
 
     '''
     print message
@@ -49,8 +49,9 @@ def main():
         sys.exit(2)
 
     if not args.fastq:
-        #args.fastq  = '/shared/wesslerlab/Rice/RIL/Illumina/'
-        args.fastq  = '/rhome/cjinfeng/BigData/00.RD/RILs/QTL_pipe/input/fastq/Illumina_fixed_link'
+        #args.fastq = '/shared/wesslerlab/Rice/RIL/Illumina/'
+        #args.fastq = '/rhome/cjinfeng/BigData/00.RD/RILs/QTL_pipe/input/fastq/Illumina_fixed_link'
+        args.fastq = '/rhome/cjinfeng/Rice/RIL/Illumina_correct'
 
     if not args.output:
         args.output = re.sub(r'bam', 'fastq', args.bam)
@@ -69,11 +70,11 @@ def main():
             strain = r.search(os.path.split(bam_path)[1]).groups(0)[1]
             prefix = r.search(os.path.split(bam_path)[1]).groups(0)[0]
             print ril, strain, prefix
-            fq1    = '%s/%s/%s_p1.fq' %(args.fastq, strain, prefix)
-            fq2    = '%s/%s/%s_p2.fq' %(args.fastq, strain, prefix)
+            fq1    = '%s/%s/%s_p1.fq.gz' %(args.fastq, strain, prefix)
+            fq2    = '%s/%s/%s_p2.fq.gz' %(args.fastq, strain, prefix)
             subdir = '%s/%s' %(args.output, ril)
-            fq1n   = '%s/%s_1.fq' %(subdir, ril)
-            fq2n   = '%s/%s_2.fq' %(subdir, ril)
+            fq1n   = '%s/%s_1.fq.gz' %(subdir, ril)
+            fq2n   = '%s/%s_2.fq.gz' %(subdir, ril)
             if not os.path.exists(subdir):
                 os.mkdir(subdir)
             os.system('ln -s %s %s' %(fq1, fq1n)) 
