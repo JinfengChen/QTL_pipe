@@ -144,6 +144,14 @@ python Fix_Bam_ID_tab2SNP.py --input RILs_ALL_bam_correct
 #prepare for RelocaTE run
 cd ../input/fastq
 python PrepareRelocaTE.py --bam RILs_ALL_bam_correct
+#Merge libraries with same barcode, increace depth. for both fastq and bam
+cd ../input/fastq
+python PrepareRelocaTE_Merged.py --bam RILs_ALL_bam_correct
+python PrepareRelocaTE_Merged_BAM.py --bam RILs_ALL_bam_correct
+cd ../bin/inf_script
+python Run_Qualimap.py --bam ../../input/fastq/RILs_ALL_bam_correct_merged/
+python Sum_Qualimap.py --bam ../../input/fastq/RILs_ALL_bam_correct_merged/ > RILs_ALL_bam_correct_merged.summary
+
 
 #add seed dimension trait
 cd script/trait

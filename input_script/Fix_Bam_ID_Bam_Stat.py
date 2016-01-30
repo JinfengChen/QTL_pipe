@@ -116,7 +116,7 @@ def bamstat(list1, prefix):
                 flowcell = 'FC0'
                 if m2:
                     flowcell = 'FC%s' %(str(m2.groups(0)[0]))
-                    if flowcell == 'FC365' or flowcell == 'FC381' or flowcell == 'FC382' or flowcell == 'FC402':
+                    if flowcell == 'FC365' or flowcell == 'FC381' or flowcell == 'FC382' or flowcell == 'FC402' or flowcell == 'FC405':
                         readl = 75
                     elif flowcell == 'FC279':
                         readl = 250
