@@ -1,15 +1,20 @@
 #!/bin/sh
-#PBS -l nodes=1:ppn=1
-#PBS -l mem=2gb
-#PBS -l walltime=100:00:00
+#SBATCH --nodes=1
+#SBATCH --ntasks=1
+#SBATCH --mem=20G
+#SBATCH --time=10:00:00
+#SBATCH --output=step01.parent.sh.%A_%a.stdout
+#SBATCH -p intel
+#SBATCH --workdir=./
 
-cd $PBS_O_WORKDIR
-scripts=$PBS_O_WORKDIR/scripts
+scripts=`pwd`/scripts
 
 #perl $scripts/genotype/RIL_VCF2Parents.pl --vcf ../input/reference/HEG4_dbSNP.vcf
-#perl $scripts/genotype/RIL_VCF2Parents.pl --vcf ../input/reference/HEG4_dbSNP.VQSR.vcf
+#SNP called by Sofia using this one, try this one, 20160617
+perl $scripts/genotype/RIL_VCF2Parents.pl --vcf ../input/reference/HEG4_dbSNP.VQSR.vcf
 #perl $scripts/genotype/RIL_VCF2Parents.pl --vcf ../input/reference/ALL.gatk.snp.pass.vcf
-perl $scripts/genotype/RIL_VCF2Parents.pl --vcf ../input/reference/ALL.gatk.snp.VQSR.pass.vcf
+#using this one for long time, 20160617
+#perl $scripts/genotype/RIL_VCF2Parents.pl --vcf ../input/reference/ALL.gatk.snp.VQSR.pass.vcf
 
 
 echo "done"

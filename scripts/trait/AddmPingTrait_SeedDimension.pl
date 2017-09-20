@@ -20,9 +20,9 @@ if ($opt{help}){
 }
 
 $opt{trait} ||= "/rhome/cjinfeng/HEG4_cjinfeng/RILs/QTL_pipe/input/trait/May28_2013.RIL.trait.table.QTL.trait.txt";
-$opt{mping} ||= "/rhome/cjinfeng/HEG4_cjinfeng/RILs/QTL_pipe/input/trait/Nev11_2014.mPing.table";
+$opt{mping} ||= "/rhome/cjinfeng/HEG4_cjinfeng/RILs/QTL_pipe/input/trait/Sep20_2017.mPing.table";
 $opt{cold}  ||= "/rhome/cjinfeng/HEG4_cjinfeng/RILs/QTL_pipe/input/trait/Aug2_2013.Cold.table";
-$opt{ping}  ||= "/rhome/cjinfeng/HEG4_cjinfeng/RILs/QTL_pipe/input/trait/Nev11_2014.Ping.table";
+$opt{ping}  ||= "/rhome/cjinfeng/HEG4_cjinfeng/RILs/QTL_pipe/input/trait/Sep20_2017.Ping.table";
 $opt{usda}  ||= "/rhome/cjinfeng/HEG4_cjinfeng/RILs/QTL_pipe/input/trait/Jan30_2014.USDA.table";
 $opt{seed}  ||= "/rhome/cjinfeng/HEG4_cjinfeng/RILs/QTL_pipe/input/trait/New04_2015.SeedDimension_Salt.table";
 

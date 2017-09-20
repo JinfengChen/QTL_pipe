@@ -48,7 +48,7 @@ foreach my $rils (sort keys %$refgeno){
    #next;
    #next unless ($rils=~/GN15\d{1}$/ or $rils=~/MZ00.*/);
    #next unless ($rils=~/GN131/ or $rils=~/GN80/ or $rils=~/GN83/);
-   #next unless ($rils=~/GN43/);
+   next unless ($rils=~/GN131/);
    my $svg=SVG->new(width=>$width,height=>$height);
    my $xstart=100; my $ystart=0; my $count=0; 
    foreach my $chr0 (sort { $a <=> $b } keys %{$refgeno->{$rils}}){

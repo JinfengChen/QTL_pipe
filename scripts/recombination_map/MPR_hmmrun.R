@@ -78,7 +78,7 @@ for(chr in names(SNPbyChr)){
   ids <- SNPbyChr[[chr]]
   geno.data.chr <- correctGeno(geno.data[ids,],correct.FUN=correctFUNHMM,hmmFUN=hmm.vitFUN.rils,
                                geno.probability=c(0.4975, 0.4975,0.005),transitionFUN=phy2get.haldane.rils,
-                               emissionFUN=makeEmissionFUN(errorRate=0.0106))
+                               emissionFUN=makeEmissionFUN(errorRate=0.014))
   geno.data.cr[ids,] <- geno.data.chr
 }
 
